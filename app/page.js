@@ -1,32 +1,12 @@
 "use client";
-
 import { UserButton, SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
+import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col">
-      {/* Navbar */}
-      <header className="flex justify-between items-center px-8 py-4 bg-white shadow">
-        <h1 className="text-2xl font-bold text-blue-600">EduCareer Advisor</h1>
-        <nav>
-          <SignedOut>
-            <SignInButton>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mr-2">
-                Sign In
-              </button>
-            </SignInButton>
-            <SignUpButton>
-              <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50">
-                Sign Up
-              </button>
-            </SignUpButton>
-          </SignedOut>
-          <SignedIn>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
-        </nav>
-      </header>
-
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col pt-14">
+      <Navbar />
       {/* Hero Section */}
       <section className="flex flex-col md:flex-row items-center justify-between flex-1 px-12 py-16">
         <div className="max-w-xl">
@@ -34,7 +14,7 @@ export default function Home() {
             One-Stop <span className="text-blue-600">Career & Education</span> Advisor
           </h2>
           <p className="mt-6 text-gray-600 text-lg">
-            Confused about which stream or degree to choose after 10th or 12th?  
+            Confused about which stream or degree to choose after 10th or 12th?
             Get personalized guidance, explore career paths, and discover nearby government colleges — all in one place.
           </p>
           <div className="mt-8 flex gap-4">
@@ -79,11 +59,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-6 text-center text-gray-500 text-sm">
-        © {new Date().getFullYear()} EduCareer Advisor | Built with ❤️ for SIH 2025
-      </footer>
+      <Footer />
     </main>
   );
 }

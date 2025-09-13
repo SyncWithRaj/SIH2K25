@@ -6,20 +6,40 @@ import { useUser } from "@clerk/nextjs";
 export default function PersonalDetail() {
   const { user } = useUser();
   const router = useRouter();
-  const [form, setForm] = useState({ name: "", age: "", gender: "" });
+  const [form, setForm] = useState({ name: "", age: "", gender: "", role: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    const res = await fetch("/api/personal-detail", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, userId: user.id }),
-    });
+    try {
+      console.log("🚀 Submitting form:", form);
 
-    if (!res.ok) return alert("Failed to save personal details");
+      const res = await fetch("/api/personal-detail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, userId: user.id }),
+      });
 
-    router.push("/assessment");
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Failed to save personal details");
+        return;
+      }
+
+      // ✅ Role-based redirect ONLY after form submission
+      const role = data.role || form.role;
+      if (role === "student") router.push("/assessment");
+      else if (role === "parent") router.push("/");
+      else if (role === "admin") router.push("/admin-dashboard");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -32,6 +52,7 @@ export default function PersonalDetail() {
           Personal Details
         </h1>
 
+        {/* Name */}
         <input
           type="text"
           placeholder="Full Name"
@@ -41,6 +62,7 @@ export default function PersonalDetail() {
           required
         />
 
+        {/* Age */}
         <input
           type="number"
           placeholder="Age"
@@ -50,23 +72,41 @@ export default function PersonalDetail() {
           required
         />
 
+        {/* Gender */}
         <select
           value={form.gender}
           onChange={(e) => setForm({ ...form, gender: e.target.value })}
-          className="w-full border p-3 rounded mb-6"
+          className="w-full border p-3 rounded mb-4"
           required
         >
           <option value="">Select Gender</option>
-          <option>Male</option>
-          <option>Female</option>
-          <option>Other</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
         </select>
 
+        {/* Role */}
+        <select
+          value={form.role}
+          onChange={(e) => setForm({ ...form, role: e.target.value })}
+          className="w-full border p-3 rounded mb-6"
+          required
+        >
+          <option value="">Select Role</option>
+          <option value="student">Student</option>
+          <option value="parent">Parent</option>
+          <option value="admin">Admin</option>
+        </select>
+
+        {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700"
+          className={`w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={loading}
         >
-          Continue
+          {loading ? "Saving..." : "Continue"}
         </button>
       </form>
     </main>
