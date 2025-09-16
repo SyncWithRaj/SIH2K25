@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 // Metadata
 export const metadata = {
-  title: "EduCareer Advisor",
+  title: "MargDarshak",
   description: "One-Stop Personalized Career & Education Advisor (SIH 2025)",
 };
 
