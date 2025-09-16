@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import ClientWrapper from "./components/ClientWrapper";
+import 'leaflet/dist/leaflet.css';
 
 // Load Google Fonts
 const geistSans = Geist({
