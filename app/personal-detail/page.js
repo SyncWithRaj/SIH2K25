@@ -40,7 +40,7 @@ export default function PersonalDetail() {
       const role = data.role || form.role;
       if (role === "student") router.push("/assessment");
       else if (role === "parent") router.push("/");
-      else if (role === "admin") router.push("/admin-dashboard");
+      else if (role === "admin") router.push("/admin/dashboard");
 
     } catch (err) {
       console.error(err);
