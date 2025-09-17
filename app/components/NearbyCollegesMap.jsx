@@ -49,7 +49,7 @@ export default function NearbyCollegesMap() {
         }
 
         // Overpass API query (50 km radius)
-        const radius = 10000;
+        const radius = 1000;
         const query = `
           [out:json];
           (

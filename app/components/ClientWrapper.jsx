@@ -14,22 +14,22 @@ export default function ClientWrapper({ children }) {
       return;
     }
 
-    const checkPersonalDetail = async () => {
-      try {
-        const res = await fetch(`/api/personal-detail?userId=${user.id}`);
-        const data = await res.json();
+    // const checkPersonalDetail = async () => {
+    //   try {
+    //     const res = await fetch(`/api/personal-detail?userId=${user.id}`);
+    //     const data = await res.json();
 
-        if (!data.exists) {
-          router.push("/personal-detail"); // redirect freshers
-        }
-      } catch (err) {
-        console.error("Error checking personal details:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    //     if (!data.exists) {
+    //       router.push("/personal-detail");
+    //     }
+    //   } catch (err) {
+    //     console.error("Error checking personal details:", err);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
 
-    checkPersonalDetail();
+    // checkPersonalDetail();
   }, [user, router]);
 
   if (loading) return <div>Loading...</div>;

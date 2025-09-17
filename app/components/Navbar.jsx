@@ -52,7 +52,7 @@ export default function Navbar() {
               {/* ✅ ADDED a wrapper div for alignment */}
               <div className="flex items-center space-x-4">
                 {/* ✅ ADDED Dashboard Button */}
-                <Link href="/dashboard" className="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/profile" className="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
                   Dashboard
                 </Link>
                 <UserButton afterSignOutUrl="/" />

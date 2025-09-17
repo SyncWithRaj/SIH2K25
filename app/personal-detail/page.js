@@ -4,9 +4,17 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 
 export default function PersonalDetail() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
-  const [form, setForm] = useState({ name: "", age: "", gender: "", role: "" });
+
+  const [form, setForm] = useState({
+    name: "",
+    dob: "",
+    gender: "",
+    role: "",
+    field: "",
+    courseInterested: "",
+  });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -14,8 +22,6 @@ export default function PersonalDetail() {
     setLoading(true);
 
     try {
-      console.log("🚀 Submitting form:", form);
-
       const res = await fetch("/api/personal-detail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -26,21 +32,44 @@ export default function PersonalDetail() {
 
       if (!res.ok) {
         alert(data.message || "Failed to save personal details");
+        setLoading(false);
         return;
       }
 
-      // ✅ Role-based redirect ONLY after form submission
+      // Redirect AFTER successful submission based on the selected role
       const role = data.role || form.role;
       if (role === "student") router.push("/assessment");
       else if (role === "parent") router.push("/");
       else if (role === "admin") router.push("/admin-dashboard");
+
     } catch (err) {
       console.error(err);
       alert("Something went wrong!");
-    } finally {
       setLoading(false);
     }
   };
+  
+  // --- NEW: Handler to manage conditional fields ---
+  const handleRoleChange = (e) => {
+    const newRole = e.target.value;
+    setForm(prevForm => {
+      const updatedForm = { ...prevForm, role: newRole };
+      // If the new role is not 'student', clear the student-specific fields
+      if (newRole !== 'student') {
+        updatedForm.field = '';
+        updatedForm.courseInterested = '';
+      }
+      return updatedForm;
+    });
+  };
+
+  if (!isLoaded) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-blue-50">
+        <p className="text-lg font-semibold text-gray-600">Loading...</p>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-blue-50">
@@ -52,7 +81,7 @@ export default function PersonalDetail() {
           Personal Details
         </h1>
 
-        {/* Name */}
+        {/* Name Input */}
         <input
           type="text"
           placeholder="Full Name"
@@ -62,17 +91,17 @@ export default function PersonalDetail() {
           required
         />
 
-        {/* Age */}
+        {/* Date of Birth Input */}
         <input
-          type="number"
-          placeholder="Age"
-          value={form.age}
-          onChange={(e) => setForm({ ...form, age: e.target.value })}
-          className="w-full border p-3 rounded mb-4"
+          type="date"
+          placeholder="Date of Birth"
+          value={form.dob}
+          onChange={(e) => setForm({ ...form, dob: e.target.value })}
+          className="w-full border p-3 rounded mb-4 text-gray-500"
           required
         />
 
-        {/* Gender */}
+        {/* Gender Select */}
         <select
           value={form.gender}
           onChange={(e) => setForm({ ...form, gender: e.target.value })}
@@ -85,11 +114,11 @@ export default function PersonalDetail() {
           <option value="Other">Other</option>
         </select>
 
-        {/* Role */}
+        {/* Role Select - Uses the new handler */}
         <select
           value={form.role}
-          onChange={(e) => setForm({ ...form, role: e.target.value })}
-          className="w-full border p-3 rounded mb-6"
+          onChange={handleRoleChange}
+          className="w-full border p-3 rounded mb-4"
           required
         >
           <option value="">Select Role</option>
@@ -98,10 +127,49 @@ export default function PersonalDetail() {
           <option value="admin">Admin</option>
         </select>
 
-        {/* Submit */}
+        {/* --- NEW: Conditional rendering for student-only fields --- */}
+        {form.role === 'student' && (
+          <>
+            {/* Field Select */}
+            <select
+              value={form.field}
+              onChange={(e) => setForm({ ...form, field: e.target.value })}
+              className="w-full border p-3 rounded mb-4"
+              required={form.role === 'student'} // Make required only for students
+            >
+              <option value="">Select Field</option>
+              <option value="Science">Science</option>
+              <option value="Commerce">Commerce</option>
+              <option value="Arts">Arts</option>
+              <option value="Diploma">Diploma</option>
+            </select>
+
+            {/* Course Select */}
+            <select
+              value={form.courseInterested}
+              onChange={(e) =>
+                setForm({ ...form, courseInterested: e.target.value })
+              }
+              className="w-full border p-3 rounded mb-6"
+              required={form.role === 'student'} // Make required only for students
+            >
+              <option value="">Select Course</option>
+              <optgroup label="Bachelor's Degrees">
+                <option value="B.Tech">B.Tech (Bachelor of Technology)</option>
+                {/* ... other options */}
+              </optgroup>
+              <optgroup label="Master's Degrees">
+                <option value="M.Tech">M.Tech (Master of Technology)</option>
+                {/* ... other options */}
+              </optgroup>
+            </select>
+          </>
+        )}
+        
+        {/* Submit Button */}
         <button
           type="submit"
-          className={`w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 ${
+          className={`w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors ${
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
           disabled={loading}
