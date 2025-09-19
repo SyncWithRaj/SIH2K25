@@ -13,34 +13,37 @@ import "reactflow/dist/style.css";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@clerk/nextjs";
 
+// ✅ Moved initialNodes and initialEdges outside the component
+// This ensures they have a stable reference and don't cause re-renders.
+const initialNodes = [
+  {
+    id: "1",
+    position: { x: 50, y: 50 },
+    data: { label: "Start: Self-Assessment" },
+    style: { padding: 10, borderRadius: 8, border: '1px solid #1a192b', minWidth: 150 },
+  },
+  {
+    id: "2",
+    position: { x: 350, y: 50 },
+    data: { label: "Learn Fundamentals" },
+    style: { padding: 10, borderRadius: 8, border: '1px solid #1a192b', minWidth: 150 },
+  },
+  {
+    id: "3",
+    position: { x: 650, y: 50 },
+    data: { label: "Build Projects" },
+    style: { padding: 10, borderRadius: 8, border: '1px solid #1a192b', minWidth: 150 },
+  },
+];
+
+const initialEdges = [
+  { id: "e1-2", source: "1", target: "2" },
+  { id: "e2-3", source: "2", target: "3" },
+];
+
 export default function CareerRoadmapCanvas() {
   const { user, isLoaded, isSignedIn } = useUser();
-  const initialNodes = [
-    {
-      id: "1",
-      position: { x: 50, y: 50 },
-      data: { label: "Start: Self-Assessment" },
-      style: { padding: 10, borderRadius: 8, border: '1px solid #1a192b', minWidth: 150 },
-    },
-    {
-      id: "2",
-      position: { x: 350, y: 50 },
-      data: { label: "Learn Fundamentals" },
-      style: { padding: 10, borderRadius: 8, border: '1px solid #1a192b', minWidth: 150 },
-    },
-    {
-      id: "3",
-      position: { x: 650, y: 50 },
-      data: { label: "Build Projects" },
-      style: { padding: 10, borderRadius: 8, border: '1px solid #1a192b', minWidth: 150 },
-    },
-  ];
-
-  const initialEdges = [
-    { id: "e1-2", source: "1", target: "2" },
-    { id: "e2-3", source: "2", target: "3" },
-  ];
-
+  
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
   const [eraserMode, setEraserMode] = useState(false);
@@ -49,35 +52,61 @@ export default function CareerRoadmapCanvas() {
   const canvasRef = useRef(null);
   const drawing = useRef(false);
 
-  // ✅ 1. State to track the selected node's ID
   const [selectedNodeId, setSelectedNodeId] = useState(null);
 
-  useEffect(() => {
-    const fetchRoadmap = async () => {
-      if (!user?.id) return;
-      try {
-        const response = await fetch(`/api/roadmap/load?userId=${user.id}`);
-        if (response.ok) {
-          const { data } = await response.json();
-          if (data) {
-            setNodes(data.nodes);
-            setEdges(data.edges);
-            setRoadmapExists(true);
-          } else {
-            setNodes(initialNodes);
-            setEdges(initialEdges);
-            setRoadmapExists(false);
-          }
+  // This function loads the roadmap specific to the logged-in user.
+  const loadUserRoadmap = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const response = await fetch(`/api/roadmap/load?userId=${user.id}`);
+      if (response.ok) {
+        const { data } = await response.json();
+        if (data && data.nodes && data.edges) {
+          setNodes(data.nodes);
+          setEdges(data.edges);
+          setRoadmapExists(true);
+        } else {
+          setNodes(initialNodes);
+          setEdges(initialEdges);
+          setRoadmapExists(false);
         }
-      } catch (error) {
-        console.error("Failed to load roadmap:", error);
       }
-    };
-    if (isLoaded && isSignedIn) {
-      fetchRoadmap();
+    } catch (error) {
+      console.error("Failed to load user roadmap:", error);
+      alert('Failed to load your roadmap.');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, isLoaded, isSignedIn]);
+  // ✅ Updated dependencies to only include what's necessary
+  }, [user?.id]);
+
+  // This function loads a default roadmap template.
+  const loadDefaultRoadmap = async () => {
+    try {
+      const response = await fetch('/api/roadmap/load-default'); 
+      if (response.ok) {
+        const { data } = await response.json();
+        if (data) {
+          setNodes(data.nodes);
+          setEdges(data.edges);
+          alert('Default roadmap loaded successfully!');
+        } else {
+           alert('Default roadmap could not be found.');
+        }
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Failed to load default roadmap:", error);
+      alert('Failed to load the default roadmap.');
+    }
+  };
+
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      loadUserRoadmap();
+    }
+  // ✅ The dependency array is now stable, preventing the infinite loop.
+  }, [isLoaded, isSignedIn, loadUserRoadmap]);
 
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -108,16 +137,15 @@ export default function CareerRoadmapCanvas() {
     setNodes((nds) => nds.concat(newNode));
   };
 
-  // ✅ 2. onNodeClick now opens the editor or deletes the node
   const onNodeClick = (_event, node) => {
     if (eraserMode) {
       setNodes((nds) => nds.filter((n) => n.id !== node.id));
       setEdges(
         (eds) => eds.filter((e) => e.source !== node.id && e.target !== node.id)
       );
-      setSelectedNodeId(null); // Close editor if the node is deleted
+      setSelectedNodeId(null);
     } else {
-      setSelectedNodeId(node.id); // Select node for editing
+      setSelectedNodeId(node.id);
     }
   };
 
@@ -127,13 +155,11 @@ export default function CareerRoadmapCanvas() {
     }
   };
 
-  // ✅ 3. Function to update the node's title
   const handleNodeLabelChange = (e) => {
     const newLabel = e.target.value;
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === selectedNodeId) {
-          // Create a new node object with the updated label
           return {
             ...node,
             data: {
@@ -147,13 +173,11 @@ export default function CareerRoadmapCanvas() {
     );
   };
   
-  // Find the full node object that is currently selected
   const selectedNode = useMemo(
     () => nodes.find((node) => node.id === selectedNodeId),
     [nodes, selectedNodeId]
   );
 
-  // ... (Annotation canvas functions remain the same)
   const toggleDrawMode = () => setDrawMode((d) => !d);
   const handlePointerDown = (e) => {
     if (!drawMode) return;
@@ -210,10 +234,9 @@ export default function CareerRoadmapCanvas() {
   };
 
   return (
-    // ✅ Main container now uses flex to position the editor panel
     <div className="flex w-full h-screen p-4 bg-gray-50">
       <div className="flex-grow flex flex-col h-full">
-        <div className="flex gap-3 items-center mb-3">
+        <div className="flex gap-3 items-center mb-3 flex-wrap">
             <button className="px-3 py-1 rounded bg-indigo-600 text-white" onClick={addNode}>Add Step</button>
             <button className={`px-3 py-1 rounded ${eraserMode ? "bg-red-500 text-white" : "bg-gray-200"}`} onClick={() => setEraserMode((s) => !s)}>
                 {eraserMode ? "Eraser: ON" : "Eraser"}
@@ -223,6 +246,8 @@ export default function CareerRoadmapCanvas() {
             </button>
             <button className="px-3 py-1 rounded bg-yellow-400" onClick={clearAnnotations}>Clear Annotations</button>
             <button className="px-3 py-1 rounded bg-blue-600 text-white" onClick={saveRoadmap}>Save Roadmap</button>
+            <button className="px-3 py-1 rounded bg-cyan-500 text-white" onClick={loadUserRoadmap}>Load My Roadmap</button>
+            <button className="px-3 py-1 rounded bg-purple-500 text-white" onClick={loadDefaultRoadmap}>Load Default Roadmap</button>
         </div>
 
         <div className="relative w-full h-full border rounded">
@@ -258,7 +283,6 @@ export default function CareerRoadmapCanvas() {
         </div>
       </div>
 
-      {/* ✅ 4. Editor Side Panel */}
       {selectedNode && (
         <div className="w-80 flex-shrink-0 ml-4 p-4 bg-white border rounded-lg shadow-lg">
           <h3 className="text-lg font-bold mb-4">Edit Node</h3>
@@ -285,3 +309,4 @@ export default function CareerRoadmapCanvas() {
     </div>
   );
 }
+

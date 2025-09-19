@@ -1,4 +1,4 @@
-import NearbyCollegesMap from "../components/NearbyCollegesMap";
+import NearbyCollegesMap from "../../components/NearbyCollegesMap";
 
 export default function CollegesPage() {
   return (
