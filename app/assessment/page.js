@@ -1,14 +1,16 @@
 "use client";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 
 // --- Main Assessment Component ---
 export default function Assessment() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
-  const [loading, setLoading] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [answers, setAnswers] = useState({
     favoriteSubjects: "",
@@ -29,6 +31,26 @@ export default function Assessment() {
     hobbyInfluence: "",
     instituteRanking: { rank1: "", rank2: "", rank3: "" },
   });
+
+  // EFFECT TO FETCH EXISTING ASSESSMENT DATA
+  useEffect(() => {
+    if (isLoaded) {
+      if (user) {
+        fetch(`/api/assessment?userId=${user.id}`)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data && data.answers) {
+              setAnswers(data.answers);
+            }
+          })
+          .catch(err => console.error("Failed to fetch assessment, starting fresh:", err))
+          .finally(() => setIsLoading(false));
+      } else {
+        // If Clerk is loaded but there's no user, stop loading.
+        setIsLoading(false);
+      }
+    }
+  }, [isLoaded, user]);
 
   const handleTextChange = (e) => {
     const { name, value } = e.target;
@@ -52,41 +74,45 @@ export default function Assessment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setIsSubmitting(true);
     try {
       const res = await fetch("/api/assessment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user?.id, answers }),
       });
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to save assessment");
-      }
-      router.push("/");
+      if (!res.ok) throw new Error("Failed to save assessment");
+      
+      router.push("/profile");
     } catch (err) {
       console.error(err);
       alert(`Error: ${err.message}`);
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  // --- UPDATED VALIDATION LOGIC ---
   const validateStep = () => {
     switch (currentStep) {
       case 1:
-        if (!answers.favoriteSubjects.trim() || !answers.academicProject.trim() || !answers.projectRole.trim() || !answers.projectChallenges.trim() || !answers.technicalSkills.trim() || !answers.professionalGrowthAreas.trim() || !answers.stayingUpToDate.trim()) {
-          alert("Please fill out all required fields in this section.");
-          return false;
-        }
-        return true;
+        return (
+          answers.favoriteSubjects.trim() !== '' &&
+          answers.academicProject.trim() !== '' &&
+          answers.projectRole.trim() !== '' &&
+          answers.projectChallenges.trim() !== '' &&
+          answers.technicalSkills.trim() !== '' &&
+          answers.professionalGrowthAreas.trim() !== '' &&
+          answers.stayingUpToDate.trim() !== ''
+        );
       case 2:
-        if (!answers.successMeaning.trim() || !answers.fiveYearPlan.trim() || !answers.industryChallenges.trim() || !answers.companyCulture.trim()) {
-          alert("Please fill out all required fields in this section.");
-          return false;
-        }
-        return true;
+        return (
+          answers.successMeaning.trim() !== '' &&
+          answers.fiveYearPlan.trim() !== '' &&
+          answers.industryChallenges.trim() !== '' &&
+          answers.companyCulture.trim() !== ''
+        );
+      case 4:
+        return answers.instituteRanking.rank1 && answers.instituteRanking.rank2 && answers.instituteRanking.rank3;
       default:
         return true;
     }
@@ -95,6 +121,8 @@ export default function Assessment() {
   const nextStep = () => {
     if (validateStep()) {
       setCurrentStep((prev) => (prev < 4 ? prev + 1 : prev));
+    } else {
+      alert("Please fill out all required fields marked with * before proceeding.");
     }
   };
 
@@ -107,16 +135,22 @@ export default function Assessment() {
     "Institute Selection",
   ];
 
+  if (isLoading) {
+    return <main className="min-h-screen bg-slate-50 flex items-center justify-center"><p>Loading Assessment...</p></main>;
+  }
+  
+  if (!user) {
+    return <main className="min-h-screen bg-slate-50 flex items-center justify-center"><p>Please sign in to take the assessment.</p></main>;
+  }
+
   return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4">
+    <main className="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4 mt-18">
       <div className="w-full max-w-3xl">
-        {/* Progress Stepper */}
         <div className="mb-8 flex justify-between items-center">
           {steps.map((step, index) => (
             <div key={index} className="flex-1 flex items-center">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${currentStep > index ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-500"
-                  }`}
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${currentStep > index ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-500"}`}
               >
                 {currentStep > index ? '✓' : index + 1}
               </div>
@@ -126,48 +160,28 @@ export default function Assessment() {
           ))}
         </div>
 
-        {/* Form Container */}
         <form onSubmit={handleSubmit} className="bg-white shadow-2xl rounded-2xl p-8 sm:p-12">
-          {currentStep === 1 && (
-            <Step1Academic data={answers} onTextChange={handleTextChange} onCheckboxChange={handleCheckboxChange} />
-          )}
-          {currentStep === 2 && (
-            <Step2Career data={answers} onTextChange={handleTextChange} onCheckboxChange={handleCheckboxChange} />
-          )}
-          {currentStep === 3 && (
-            <Step3Personal data={answers} onTextChange={handleTextChange} />
-          )}
-          {currentStep === 4 && (
-            <Step4Institute data={answers} onNestedChange={handleNestedChange} />
-          )}
+          {currentStep === 1 && <Step1Academic data={answers} onTextChange={handleTextChange} onCheckboxChange={handleCheckboxChange} />}
+          {currentStep === 2 && <Step2Career data={answers} onTextChange={handleTextChange} onCheckboxChange={handleCheckboxChange} />}
+          {currentStep === 3 && <Step3Personal data={answers} onTextChange={handleTextChange} />}
+          {currentStep === 4 && <Step4Institute data={answers} onNestedChange={handleNestedChange} />}
 
-          {/* Navigation Buttons */}
           <div className="mt-12 pt-6 border-t flex justify-between items-center">
             <button
               type="button"
               onClick={prevStep}
-              className={`px-6 py-2 rounded-lg font-semibold text-slate-700 bg-slate-200 hover:bg-slate-300 transition-opacity ${currentStep === 1 ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+              className={`px-6 py-2 rounded-lg font-semibold text-slate-700 bg-slate-200 hover:bg-slate-300 transition-opacity ${currentStep === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={currentStep === 1}
             >
               Previous
             </button>
             {currentStep < 4 ? (
-              <button
-                type="button"
-                onClick={nextStep}
-                className="px-8 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700"
-              >
+              <button type="button" onClick={nextStep} className="px-8 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">
                 Next
               </button>
             ) : (
-              <button
-                type="submit"
-                disabled={loading}
-                className={`px-8 py-2 rounded-lg font-bold text-white transition-colors ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
-                  }`}
-              >
-                {loading ? "Submitting..." : "Submit Assessment"}
+              <button type="submit" disabled={isSubmitting} className={`px-8 py-2 rounded-lg font-bold text-white transition-colors ${isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"}`}>
+                {isSubmitting ? "Submitting..." : "Submit Assessment"}
               </button>
             )}
           </div>
@@ -178,7 +192,6 @@ export default function Assessment() {
 }
 
 // --- Helper Components ---
-
 const Question = ({ label, children }) => (
   <label className="block mb-8">
     <span className="text-gray-800 font-semibold text-lg">{label}</span>
@@ -188,26 +201,21 @@ const Question = ({ label, children }) => (
 
 const CheckboxCard = ({ name, label, isChecked, onChange }) => (
   <label
-    className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${isChecked ? 'border-indigo-600 bg-indigo-50 shadow-md' : 'border-slate-300 bg-white hover:border-indigo-400'
-      }`}
-    onClick={(e) => {
-      e.preventDefault();
-      onChange(name);
-    }}
+    className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${isChecked ? 'border-indigo-600 bg-indigo-50 shadow-md' : 'border-slate-300 bg-white hover:border-indigo-400'}`}
+    onClick={(e) => { e.preventDefault(); onChange(name); }}
   >
     <input type="checkbox" className="hidden" checked={isChecked} readOnly />
     <span className={`font-medium ${isChecked ? 'text-indigo-800' : 'text-slate-700'}`}>{label}</span>
   </label>
 );
 
-// --- Step Components (with corrected input styles) ---
-
+// --- Step Components ---
 const baseInputStyles = "w-full border border-slate-300 bg-white p-3 rounded-lg focus:ring-indigo-500 focus:border-indigo-500";
 
 const Step1Academic = ({ data, onTextChange, onCheckboxChange }) => (
-  <div className="animate-fadeIn">
+  <div className="animate-fadeIn space-y-8">
     <h2 className="text-3xl font-bold text-slate-800 mb-8">Academic Background & Skills</h2>
-    <Question label="What were your favorite subjects in 11th and 12th, and what interested you most?">
+    <Question label="What were your favorite subjects in 11th and 12th, and what interested you most?*">
       <textarea name="favoriteSubjects" value={data.favoriteSubjects} onChange={onTextChange} className={`${baseInputStyles} h-28`} required />
     </Question>
     <Question label="How do you prefer to learn?">
@@ -217,33 +225,32 @@ const Step1Academic = ({ data, onTextChange, onCheckboxChange }) => (
         ))}
       </div>
     </Question>
-    <Question label="Describe a significant academic project or task you've worked on.">
+    <Question label="Describe a significant academic project or task you've worked on.*">
       <div className="space-y-4">
         <textarea name="academicProject" value={data.academicProject} onChange={onTextChange} placeholder="What was the project?" className={`${baseInputStyles} h-20`} required />
         <textarea name="projectRole" value={data.projectRole} onChange={onTextChange} placeholder="What was your role?" className={`${baseInputStyles} h-20`} required />
         <textarea name="projectChallenges" value={data.projectChallenges} onChange={onTextChange} placeholder="What challenges did you face and how did you overcome them?" className={`${baseInputStyles} h-28`} required />
       </div>
     </Question>
-    {/* --- NEWLY ADDED QUESTIONS --- */}
-    <Question label="What specific technical skills do you have related to your field of interest? (e.g., Python, SQL, AutoCAD)">
+    <Question label="What specific technical skills do you have? (e.g., Python, SQL, AutoCAD)*">
       <input type="text" name="technicalSkills" value={data.technicalSkills} onChange={onTextChange} className={baseInputStyles} required />
     </Question>
-    <Question label="What do you see as your biggest areas for professional growth? (e.g., public speaking, a new programming language)">
+    <Question label="What are your biggest areas for professional growth? (e.g., public speaking)*">
       <input type="text" name="professionalGrowthAreas" value={data.professionalGrowthAreas} onChange={onTextChange} className={baseInputStyles} required />
     </Question>
-    <Question label="How do you stay up-to-date with new technologies or developments in your chosen field?">
+    <Question label="How do you stay up-to-date with new developments in your field?*">
       <textarea name="stayingUpToDate" value={data.stayingUpToDate} onChange={onTextChange} className={`${baseInputStyles} h-24`} required />
     </Question>
   </div>
 );
 
 const Step2Career = ({ data, onTextChange, onCheckboxChange }) => (
-  <div className="animate-fadeIn">
+  <div className="animate-fadeIn space-y-8">
     <h2 className="text-3xl font-bold text-slate-800 mb-8">Career Aspirations</h2>
-    <Question label="What does 'success' mean to you personally?">
+    <Question label="What does 'success' mean to you personally?*">
       <textarea name="successMeaning" value={data.successMeaning} onChange={onTextChange} className={`${baseInputStyles} h-28`} required />
     </Question>
-    <Question label="Where do you realistically see yourself in five years?">
+    <Question label="Where do you realistically see yourself in five years?*">
       <textarea name="fiveYearPlan" value={data.fiveYearPlan} onChange={onTextChange} className={`${baseInputStyles} h-28`} required />
     </Question>
     <Question label="What are the most important values in a future job?">
@@ -253,18 +260,17 @@ const Step2Career = ({ data, onTextChange, onCheckboxChange }) => (
         ))}
       </div>
     </Question>
-    {/* --- NEWLY ADDED QUESTIONS --- */}
-    <Question label="Based on your research, what are the primary challenges or opportunities facing the industry you want to enter?">
+    <Question label="What are the primary challenges or opportunities in the industry you want to enter?*">
       <textarea name="industryChallenges" value={data.industryChallenges} onChange={onTextChange} className={`${baseInputStyles} h-28`} required />
     </Question>
-    <Question label="What kind of company culture are you looking for in a future employer?">
+    <Question label="What kind of company culture are you looking for?*">
       <textarea name="companyCulture" value={data.companyCulture} onChange={onTextChange} className={`${baseInputStyles} h-28`} required />
     </Question>
   </div>
 );
 
 const Step3Personal = ({ data, onTextChange }) => (
-  <div className="animate-fadeIn">
+  <div className="animate-fadeIn space-y-8">
     <h2 className="text-3xl font-bold text-slate-800 mb-8">Personal Interests</h2>
     <Question label="Besides academics, what do you enjoy doing in your spare time?">
       <input type="text" name="hobbies" value={data.hobbies} onChange={onTextChange} className={baseInputStyles} />
@@ -288,26 +294,26 @@ const Step4Institute = ({ data, onNestedChange }) => {
     { value: "campusLife", label: "Campus Life & Extracurriculars" },
   ];
 
-  const selectedValues = Object.values(data.instituteRanking);
+  const { rank1, rank2, rank3 } = data.instituteRanking;
 
-  const optionsForRank1 = allRankingOptions.filter(opt => !selectedValues.includes(opt.value) || opt.value === data.instituteRanking.rank1);
-  const optionsForRank2 = allRankingOptions.filter(opt => !selectedValues.includes(opt.value) || opt.value === data.instituteRanking.rank2);
-  const optionsForRank3 = allRankingOptions.filter(opt => !selectedValues.includes(opt.value) || opt.value === data.instituteRanking.rank3);
+  const optionsForRank1 = allRankingOptions.filter(opt => opt.value !== rank2 && opt.value !== rank3);
+  const optionsForRank2 = allRankingOptions.filter(opt => opt.value !== rank1 && opt.value !== rank3);
+  const optionsForRank3 = allRankingOptions.filter(opt => opt.value !== rank1 && opt.value !== rank2);
 
   return (
-    <div className="animate-fadeIn">
+    <div className="animate-fadeIn space-y-8">
       <h2 className="text-3xl font-bold text-slate-800 mb-8">Institute Selection</h2>
-      <Question label="When choosing a college, which criteria are most important to you? Please rank your top three.">
+      <Question label="When choosing a college, please rank your top three criteria.*">
         <div className="space-y-4">
-          <select name="rank1" value={data.instituteRanking.rank1} onChange={(e) => onNestedChange("instituteRanking", e)} className={baseInputStyles} required>
+          <select name="rank1" value={rank1} onChange={(e) => onNestedChange("instituteRanking", e)} className={baseInputStyles} required>
             <option value="">Select 1st Priority</option>
             {optionsForRank1.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
           </select>
-          <select name="rank2" value={data.instituteRanking.rank2} onChange={(e) => onNestedChange("instituteRanking", e)} className={baseInputStyles} required>
+          <select name="rank2" value={rank2} onChange={(e) => onNestedChange("instituteRanking", e)} className={baseInputStyles} required>
             <option value="">Select 2nd Priority</option>
             {optionsForRank2.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
           </select>
-          <select name="rank3" value={data.instituteRanking.rank3} onChange={(e) => onNestedChange("instituteRanking", e)} className={baseInputStyles} required>
+          <select name="rank3" value={rank3} onChange={(e) => onNestedChange("instituteRanking", e)} className={baseInputStyles} required>
             <option value="">Select 3rd Priority</option>
             {optionsForRank3.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
           </select>
@@ -316,3 +322,4 @@ const Step4Institute = ({ data, onNestedChange }) => {
     </div>
   );
 };
+

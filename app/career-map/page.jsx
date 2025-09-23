@@ -1,5 +1,6 @@
 "use client";
 import React, { useCallback, useState, useRef, useEffect, useMemo } from "react";
+import Link from 'next/link';
 import ReactFlow, {
   addEdge,
   applyNodeChanges,
@@ -12,34 +13,58 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@clerk/nextjs";
+import {
+  FaPlus,
+  FaEraser,
+  FaPen,
+  FaTrashAlt,
+  FaSave,
+  FaFolderOpen,
+  FaDownload,
+  FaArrowLeft,
+} from "react-icons/fa";
 
-// ✅ Moved initialNodes and initialEdges outside the component
-// This ensures they have a stable reference and don't cause re-renders.
+// --- Initial Data ---
 const initialNodes = [
   {
     id: "1",
     position: { x: 50, y: 50 },
     data: { label: "Start: Self-Assessment" },
-    style: { padding: 10, borderRadius: 8, border: '1px solid #1a192b', minWidth: 150 },
+    style: { padding: '12px 18px', borderRadius: 99, border: "1px solid #4f46e5", minWidth: 150, background: '#eef2ff', color: '#312e81', fontWeight: 500 },
   },
   {
     id: "2",
     position: { x: 350, y: 50 },
     data: { label: "Learn Fundamentals" },
-    style: { padding: 10, borderRadius: 8, border: '1px solid #1a192b', minWidth: 150 },
+    style: { padding: '12px 18px', borderRadius: 99, border: "1px solid #1a192b", minWidth: 150 },
   },
   {
     id: "3",
     position: { x: 650, y: 50 },
     data: { label: "Build Projects" },
-    style: { padding: 10, borderRadius: 8, border: '1px solid #1a192b', minWidth: 150 },
+    style: { padding: '12px 18px', borderRadius: 99, border: "1px solid #1a192b", minWidth: 150 },
   },
 ];
 
 const initialEdges = [
-  { id: "e1-2", source: "1", target: "2" },
+  { id: "e1-2", source: "1", target: "2", animated: true, style: { stroke: '#4f46e5' } },
   { id: "e2-3", source: "2", target: "3" },
 ];
+
+// --- Reusable Action Button Component ---
+const ActionButton = ({ onClick, children, className = "", isActive = false }) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 shadow-sm ${
+      isActive
+        ? "bg-indigo-600 text-white shadow-md scale-105"
+        : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
+    } ${className}`}
+  >
+    {children}
+  </button>
+);
+
 
 export default function CareerRoadmapCanvas() {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -53,8 +78,8 @@ export default function CareerRoadmapCanvas() {
   const drawing = useRef(false);
 
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [editedLabel, setEditedLabel] = useState("");
 
-  // This function loads the roadmap specific to the logged-in user.
   const loadUserRoadmap = useCallback(async () => {
     if (!user?.id) return;
     try {
@@ -75,10 +100,8 @@ export default function CareerRoadmapCanvas() {
       console.error("Failed to load user roadmap:", error);
       alert('Failed to load your roadmap.');
     }
-  // ✅ Updated dependencies to only include what's necessary
   }, [user?.id]);
 
-  // This function loads a default roadmap template.
   const loadDefaultRoadmap = async () => {
     try {
       const response = await fetch('/api/roadmap/load-default'); 
@@ -100,13 +123,22 @@ export default function CareerRoadmapCanvas() {
     }
   };
 
-
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       loadUserRoadmap();
     }
-  // ✅ The dependency array is now stable, preventing the infinite loop.
   }, [isLoaded, isSignedIn, loadUserRoadmap]);
+  
+  const selectedNode = useMemo(
+    () => nodes.find((node) => node.id === selectedNodeId),
+    [nodes, selectedNodeId]
+  );
+  
+  useEffect(() => {
+    if (selectedNode) {
+      setEditedLabel(selectedNode.data.label);
+    }
+  }, [selectedNode]);
 
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -119,7 +151,7 @@ export default function CareerRoadmapCanvas() {
   );
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) => setEdges((eds) => addEdge({ ...params, animated: true, style: { stroke: '#4f46e5' } }, eds)),
     []
   );
 
@@ -128,11 +160,11 @@ export default function CareerRoadmapCanvas() {
     const newNode = {
       id,
       position: {
-        x: 200 + Math.random() * 400,
-        y: 200 + Math.random() * 200,
+        x: 100 + Math.random() * 400,
+        y: 100 + Math.random() * 200,
       },
       data: { label: "New Step" },
-      style: { padding: 10, borderRadius: 8, border: '1px solid #1a192b', minWidth: 150 },
+      style: { padding: '12px 18px', borderRadius: 99, border: '1px solid #1a192b', minWidth: 150 },
     };
     setNodes((nds) => nds.concat(newNode));
   };
@@ -155,29 +187,21 @@ export default function CareerRoadmapCanvas() {
     }
   };
 
-  const handleNodeLabelChange = (e) => {
-    const newLabel = e.target.value;
+  const handleSaveChanges = () => {
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === selectedNodeId) {
           return {
             ...node,
-            data: {
-              ...node.data,
-              label: newLabel,
-            },
+            data: { ...node.data, label: editedLabel },
           };
         }
         return node;
       })
     );
+    setSelectedNodeId(null);
   };
   
-  const selectedNode = useMemo(
-    () => nodes.find((node) => node.id === selectedNodeId),
-    [nodes, selectedNodeId]
-  );
-
   const toggleDrawMode = () => setDrawMode((d) => !d);
   const handlePointerDown = (e) => {
     if (!drawMode) return;
@@ -194,6 +218,7 @@ export default function CareerRoadmapCanvas() {
     const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext("2d");
     ctx.lineWidth = 2;
+    ctx.strokeStyle = '#1e293b';
     ctx.lineCap = "round";
     ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
     ctx.stroke();
@@ -234,23 +259,40 @@ export default function CareerRoadmapCanvas() {
   };
 
   return (
-    <div className="flex w-full h-screen p-4 bg-gray-50">
+    <div className="flex w-full h-[91vh] p-6 bg-slate-50 font-sans mt-18">
       <div className="flex-grow flex flex-col h-full">
-        <div className="flex gap-3 items-center mb-3 flex-wrap">
-            <button className="px-3 py-1 rounded bg-indigo-600 text-white" onClick={addNode}>Add Step</button>
-            <button className={`px-3 py-1 rounded ${eraserMode ? "bg-red-500 text-white" : "bg-gray-200"}`} onClick={() => setEraserMode((s) => !s)}>
-                {eraserMode ? "Eraser: ON" : "Eraser"}
-            </button>
-            <button className={`px-3 py-1 rounded ${drawMode ? "bg-green-600 text-white" : "bg-gray-200"}`} onClick={toggleDrawMode}>
-                {drawMode ? "Draw: ON" : "Annotate"}
-            </button>
-            <button className="px-3 py-1 rounded bg-yellow-400" onClick={clearAnnotations}>Clear Annotations</button>
-            <button className="px-3 py-1 rounded bg-blue-600 text-white" onClick={saveRoadmap}>Save Roadmap</button>
-            <button className="px-3 py-1 rounded bg-cyan-500 text-white" onClick={loadUserRoadmap}>Load My Roadmap</button>
-            <button className="px-3 py-1 rounded bg-purple-500 text-white" onClick={loadDefaultRoadmap}>Load Default Roadmap</button>
+        
+        {/* --- Title Section --- */}
+        <div className="mb-4">
+            <h1 className="text-4xl font-bold text-slate-800">
+                Architect Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">Ambition</span>
+            </h1>
+            <p className="text-md text-slate-500">Your dynamic career blueprint for tomorrow's opportunities.</p>
         </div>
 
-        <div className="relative w-full h-full border rounded">
+        {/* --- Glassmorphism Toolbar --- */}
+        <div className="flex gap-2 items-center mb-4 p-2 bg-white/60 backdrop-blur-lg border border-slate-200/80 rounded-full shadow-lg shadow-slate-300/10 flex-wrap">
+            <Link href="/">
+                <ActionButton><FaArrowLeft /> Back</ActionButton>
+            </Link>
+
+            <ActionButton onClick={addNode}><FaPlus /> Add Step</ActionButton>
+            <ActionButton onClick={() => setEraserMode((s) => !s)} isActive={eraserMode} className={eraserMode ? 'bg-red-500 text-white hover:bg-red-600' : ''}>
+              <FaEraser /> {eraserMode ? "Eraser: ON" : "Eraser"}
+            </ActionButton>
+            <ActionButton onClick={toggleDrawMode} isActive={drawMode} className={drawMode ? 'bg-emerald-500 text-white hover:bg-emerald-600' : ''}>
+              <FaPen /> {drawMode ? "Draw: ON" : "Annotate"}
+            </ActionButton>
+            <ActionButton onClick={clearAnnotations}><FaTrashAlt /> Clear</ActionButton>
+
+            <div className="flex-grow" /> {/* Spacer */}
+
+            <ActionButton onClick={saveRoadmap} className="bg-blue-600 text-black hover:bg-blue-700"><FaSave /> Save</ActionButton>
+            <ActionButton onClick={loadUserRoadmap}><FaFolderOpen /> Load My Roadmap</ActionButton>
+            <ActionButton onClick={loadDefaultRoadmap}><FaDownload /> Load Default</ActionButton>
+        </div>
+
+        <div className="relative w-full h-full border border-slate-200 rounded-2xl overflow-hidden shadow-xl shadow-slate-200/60">
           <ReactFlowProvider>
             <ReactFlow
               nodes={nodes}
@@ -262,14 +304,13 @@ export default function CareerRoadmapCanvas() {
               onEdgeClick={onEdgeClick}
               fitView
               attributionPosition="bottom-left"
-              className="absolute inset-0"
+              className="absolute inset-0 bg-white"
             >
-              <MiniMap />
+              <MiniMap nodeStrokeWidth={3} zoomable pannable />
               <Controls />
-              <Background />
+              <Background color="#eef2ff" gap={24} />
             </ReactFlow>
           </ReactFlowProvider>
-
           <canvas
             ref={canvasRef}
             width={typeof window !== "undefined" ? window.innerWidth : 800}
@@ -283,30 +324,44 @@ export default function CareerRoadmapCanvas() {
         </div>
       </div>
 
+      {/* --- Enhanced Edit Sidebar --- */}
       {selectedNode && (
-        <div className="w-80 flex-shrink-0 ml-4 p-4 bg-white border rounded-lg shadow-lg">
-          <h3 className="text-lg font-bold mb-4">Edit Node</h3>
-          <div className="mb-4">
-            <label htmlFor="node-label" className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="w-96 flex-shrink-0 ml-6 p-1 bg-white border border-slate-200 rounded-2xl shadow-2xl shadow-slate-300/40 flex flex-col">
+          <div className="p-5 border-b border-slate-200">
+            <h3 className="text-xl font-semibold text-slate-800">Edit Step</h3>
+          </div>
+          <div className="p-5 flex-grow">
+            <label htmlFor="node-label" className="block text-sm font-medium text-slate-600 mb-2">
               Title
             </label>
-            <input
-              id="node-label"
-              type="text"
-              className="w-full px-2 py-1 border border-gray-300 rounded-md"
-              value={selectedNode.data.label}
-              onChange={handleNodeLabelChange}
-            />
+            <div className="group relative">
+                <input
+                  id="node-label"
+                  type="text"
+                  className="w-full pl-3 pr-10 py-2 bg-slate-50 border-2 border-slate-200 rounded-lg shadow-inner transition-colors focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"
+                  value={editedLabel}
+                  onChange={(e) => setEditedLabel(e.target.value)}
+                  autoFocus
+                  onKeyDown={(e) => e.key === 'Enter' && handleSaveChanges()}
+                />
+            </div>
           </div>
-          <button
-            className="w-full px-4 py-2 bg-gray-200 text-black rounded-md hover:bg-gray-300"
-            onClick={() => setSelectedNodeId(null)}
-          >
-            Close
-          </button>
+          <div className="flex gap-3 p-5 border-t border-slate-200 bg-slate-50/50 rounded-b-2xl">
+              <button
+                className="flex-1 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-105 shadow-sm"
+                onClick={handleSaveChanges}
+              >
+                Save Changes
+              </button>
+              <button
+                className="flex-1 px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-full hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-colors"
+                onClick={() => setSelectedNodeId(null)}
+              >
+                Cancel
+              </button>
+          </div>
         </div>
       )}
     </div>
   );
 }
-

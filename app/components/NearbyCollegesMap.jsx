@@ -1,15 +1,24 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 // --- Helper Component for Displaying Full College Details ---
-// ... (This component does not need to change)
 const CollegeDetailsPanel = ({ college, onClose }) => {
   const details = college.dbData;
 
+  const groupedBranches = details?.branches?.reduce((acc, branch) => {
+    const { branchName, ...rest } = branch;
+    if (!acc[branchName]) {
+      acc[branchName] = { intake: rest.intake, board: rest.board, categories: [] };
+    }
+    acc[branchName].categories.push(rest);
+    return acc;
+  }, {});
+
   return (
-    <div className="w-1/3 max-w-md p-4 bg-white shadow-lg overflow-y-auto border-l border-r flex flex-col">
+    <div className="w-full md:w-1/3 max-w-md p-4 bg-white shadow-lg overflow-y-auto border-l border-r flex flex-col z-10">
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <h3 className="text-xl font-bold">College Details</h3>
         <button onClick={onClose} className="text-2xl font-bold text-gray-500 hover:text-gray-800">&times;</button>
@@ -32,7 +41,7 @@ const CollegeDetailsPanel = ({ college, onClose }) => {
             <ul className="space-y-1 text-sm text-gray-700 border-t pt-4">
               <li><strong>Contact:</strong> {details.contactNo || "N/A"}</li>
               <li><strong>Email:</strong> {details.email ? <a href={`mailto:${details.email}`} className="text-blue-600 hover:underline">{details.email}</a> : 'N/A'}</li>
-              <li><strong>Website:</strong> <a href={details.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{details.website}</a></li>
+              <li><strong>Website:</strong> {details.website ? <a href={`https://${details.website.replace(/^https?:\/\//,'')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{details.website}</a> : 'N/A'}</li>
               <li><strong>University:</strong> {details.university || "N/A"}</li>
               <li><strong>Fees:</strong> {details.fees || "N/A"}</li>
             </ul>
@@ -46,7 +55,7 @@ const CollegeDetailsPanel = ({ college, onClose }) => {
                 <span className={`px-3 py-1 rounded-full font-medium ${details.facilities?.girlsHostel ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     {details.facilities?.girlsHostel ? '✔️' : '❌'} Girls Hostel
                 </span>
-                <span className={`px-3 py-1 rounded-full font-medium ${details.facilities?.mess ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                 <span className={`px-3 py-1 rounded-full font-medium ${details.facilities?.mess ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     {details.facilities?.mess ? '✔️' : '❌'} Mess
                 </span>
                 <span className={`px-3 py-1 rounded-full font-medium ${details.facilities?.transportation ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -62,23 +71,27 @@ const CollegeDetailsPanel = ({ college, onClose }) => {
                   <thead className="bg-gray-100">
                     <tr>
                       <th className="p-2 text-left font-medium">Branch</th>
-                      <th className="p-2 text-left font-medium">Intake</th>
-                      <th className="p-2 text-left font-medium">Govt. Seats</th>
-                      <th className="p-2 text-left font-medium">Board</th>
                       <th className="p-2 text-left font-medium">Category</th>
-                      <th className="p-2 text-left font-medium">Closing Rank</th>
+                      <th className="p-2 text-left font-medium">Closing Rank/Score</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {details.branches?.map((branch, index) => (
-                      <tr key={index} className="border-t">
-                        <td className="p-2 font-semibold">{branch.branchName}</td>
-                        <td className="p-2">{branch.intake}</td>
-                        <td className="p-2">{branch.governmentSeats}</td>
-                        <td className="p-2">{branch.board}</td>
-                        <td className="p-2">{branch.category}</td>
-                        <td className="p-2">{branch.closingRank}</td>
-                      </tr>
+                    {groupedBranches && Object.entries(groupedBranches).map(([branchName, data]) => (
+                      <React.Fragment key={branchName}>
+                        <tr className="border-t bg-gray-50">
+                          <td className="p-2 font-bold" colSpan="3">
+                            {branchName} 
+                            <span className="font-normal text-gray-600 ml-2">(Intake: {data.intake > 0 ? data.intake : 'N/A'}, Board: {data.board})</span>
+                          </td>
+                        </tr>
+                        {data.categories.map((cat, catIndex) => (
+                           <tr key={`${branchName}-${catIndex}`}>
+                             <td className="p-2 pl-6">{/* Intentionally empty for alignment */}</td>
+                             <td className="p-2">{cat.category}</td>
+                             <td className="p-2 font-semibold">{cat.closingRank === 0 ? 'N/A' : cat.closingRank}</td>
+                           </tr>
+                        ))}
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>
@@ -94,12 +107,14 @@ const CollegeDetailsPanel = ({ college, onClose }) => {
 // --- Main Map Component ---
 
 // Fix Leaflet icons
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-});
+if (typeof window !== 'undefined') {
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+        iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+        iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+    });
+}
 
 export default function NearbyCollegesMap() {
   const mapRef = useRef(null);
@@ -111,7 +126,7 @@ export default function NearbyCollegesMap() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!navigator.geolocation) {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
       setStatus("Geolocation is not supported by your browser.");
       return;
     }
@@ -127,6 +142,12 @@ export default function NearbyCollegesMap() {
           fetch("/api/colleges")
         ]);
 
+        if (!overpassResponse.ok) {
+            const errorText = await overpassResponse.text();
+            throw new Error(`Failed to fetch from Overpass API. Status: ${overpassResponse.status}. Message: ${errorText}`);
+        }
+        if (!dbResponse.ok) throw new Error('Failed to fetch from local database API');
+
         const overpassData = await overpassResponse.json();
         const dbData = await dbResponse.json();
         
@@ -136,33 +157,32 @@ export default function NearbyCollegesMap() {
         const mergedColleges = overpassData.elements.map(el => {
             const mapName = el.tags.name || "Unnamed College";
 
-            // --- NEW, SMARTER MATCHING LOGIC ---
+            // ✅ --- THE FINAL FIX IS HERE --- ✅
             const dbMatch = dbColleges.find(dbCollege => {
-                // 1. Create a clean set of words for each name
-                const mapWords = new Set(mapName.toLowerCase().split(/[\s,.-]+/).filter(Boolean));
-                const dbWords = new Set(dbCollege.name.toLowerCase().split(/[\s,.-]+/).filter(Boolean));
+                const normalize = (str) => 
+                    str.toLowerCase()
+                       .replace(/[(),.\-&]/g, '') // Remove punctuation
+                       .replace('indian institute of technology', 'iit')
+                       .replace('indian institute of management', 'iim')
+                       .replace('national institute of design', 'nid')
+                       .replace('government', 'govt') 
+                       .split(' ')
+                       .filter(Boolean);
 
-                if (mapWords.size === 0 || dbWords.size === 0) return false;
-                
-                // 2. Identify which set of words is shorter
-                const [shorterSet, longerSet] = mapWords.size <= dbWords.size ? [mapWords, dbWords] : [dbWords, mapWords];
+                const mapWords = normalize(mapName);
+                const dbWords = normalize(dbCollege.name);
 
-                // 3. Check if every word from the shorter set exists in the longer set
-                for (const word of shorterSet) {
-                    if (!longerSet.has(word)) {
-                        return false; // If any word is missing, it's not a match
-                    }
-                }
-                
-                return true; // All words matched!
+                // If one name is just the acronym (e.g., "iit gandhinagar")
+                // and the other is the full name, this will now work.
+                return mapWords.every(word => dbWords.includes(word)) || dbWords.every(word => mapWords.includes(word));
             });
-            // --- END OF NEW LOGIC ---
-
             return { id: el.id, name: mapName, lat: el.lat || el.center?.lat, lon: el.lon || el.center?.lon, dbData: dbMatch || null };
         });
 
-        const filterKeywords = ['government', 'govt', 'sarkari', 'national institute', 'indian institute', 'iit', 'nit', 'grant-in-aid', 'grant'];
+        const filterKeywords = ['government', 'govt', 'sarkari', 'national institute', 'indian institute', 'iit', 'nit', 'nid', 'grant-in-aid', 'grant', 'ld'];
+        
         const filteredColleges = mergedColleges.filter(college => {
+            if (!college.lat || !college.lon) return false;
             const lowerCaseName = college.name.toLowerCase();
             return filterKeywords.some(keyword => lowerCaseName.includes(keyword));
         });
@@ -172,7 +192,7 @@ export default function NearbyCollegesMap() {
 
       } catch (error) {
         console.error("Error fetching data:", error);
-        setStatus("Failed to fetch college data.");
+        setStatus(error.message);
       }
     };
 
@@ -180,7 +200,7 @@ export default function NearbyCollegesMap() {
       (pos) => {
         const { latitude, longitude } = pos.coords;
         if (mapRef.current && !mapInstanceRef.current) {
-          const map = L.map(mapRef.current).setView([latitude, longitude], 11);
+          const map = L.map(mapRef.current).setView([latitude, longitude], 10);
           mapInstanceRef.current = map;
           L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -196,15 +216,24 @@ export default function NearbyCollegesMap() {
     );
   }, []);
 
-  // ... (rest of the component: useEffect for markers, handleCollegeClick, and JSX return)
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map) return;
+    if (!map || !colleges) return;
+
     Object.values(markersRef.current).forEach((marker) => marker.remove());
     markersRef.current = {};
+
     colleges.forEach((college) => {
       if (college.lat && college.lon) {
-        const marker = L.marker([college.lat, college.lon]).addTo(map).bindPopup(`<b>${college.name}</b>`);
+        const icon = new L.Icon({
+            ...L.Icon.Default.prototype.options,
+            iconUrl: college.dbData ? "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png" : "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+            shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+        });
+
+        const marker = L.marker([college.lat, college.lon], { icon }).addTo(map).bindPopup(`<b>${college.name}</b>`);
+        marker.on('click', () => handleCollegeClick(college));
         markersRef.current[college.id] = marker;
       }
     });
@@ -221,13 +250,13 @@ export default function NearbyCollegesMap() {
   };
 
   return (
-    <div className="flex w-full h-full" style={{ height: "calc(100vh - 4rem)" }}>
-      <aside className="w-1/3 max-w-xs p-4 bg-gray-50 shadow-lg overflow-y-auto flex flex-col">
+    <div className="flex w-full h-full flex-col md:flex-row mt-24" style={{ height: "calc(100vh - 4rem)" }}>
+      <aside className="w-full md:w-1/3 max-w-xs p-4 bg-gray-50 shadow-lg overflow-y-auto flex flex-col">
         <div className="flex items-center gap-3 mb-4 flex-shrink-0">
           <button onClick={() => router.push("/")} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition">
             ← Back
           </button>
-          <h2 className="text-xl font-bold">Govt. & Grant-in-Aid</h2>
+          <h2 className="text-xl font-bold">Nearby Colleges</h2>
         </div>
         <div className="flex-grow overflow-y-auto">
           {colleges.length > 0 ? (
@@ -239,7 +268,7 @@ export default function NearbyCollegesMap() {
                   className={`p-2 border-b cursor-pointer hover:bg-gray-200 rounded-md ${selectedCollege?.id === college.id ? 'bg-blue-100' : ''}`}
                 >
                   <h3 className="font-semibold text-sm">{college.name}</h3>
-                  {college.dbData && <span className="text-xs text-blue-600">Details Available</span>}
+                  {college.dbData && <span className="text-xs text-blue-600 font-bold">✓ Details Available</span>}
                 </li>
               ))}
             </ul>
@@ -254,7 +283,7 @@ export default function NearbyCollegesMap() {
           onClose={() => setSelectedCollege(null)} 
         />
       )}
-      <div id="map" ref={mapRef} className="flex-grow h-full" />
+      <div id="map" ref={mapRef} className="flex-grow h-full w-full" />
     </div>
   );
 }

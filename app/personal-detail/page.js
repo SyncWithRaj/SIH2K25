@@ -36,7 +36,6 @@ export default function PersonalDetail() {
         return;
       }
 
-      // Redirect AFTER successful submission based on the selected role
       const role = data.role || form.role;
       if (role === "student") router.push("/assessment");
       else if (role === "parent") router.push("/");
@@ -48,13 +47,11 @@ export default function PersonalDetail() {
       setLoading(false);
     }
   };
-  
-  // --- NEW: Handler to manage conditional fields ---
+
   const handleRoleChange = (e) => {
     const newRole = e.target.value;
     setForm(prevForm => {
       const updatedForm = { ...prevForm, role: newRole };
-      // If the new role is not 'student', clear the student-specific fields
       if (newRole !== 'student') {
         updatedForm.field = '';
         updatedForm.courseInterested = '';
@@ -114,7 +111,7 @@ export default function PersonalDetail() {
           <option value="Other">Other</option>
         </select>
 
-        {/* Role Select - Uses the new handler */}
+        {/* Role Select */}
         <select
           value={form.role}
           onChange={handleRoleChange}
@@ -127,7 +124,7 @@ export default function PersonalDetail() {
           <option value="admin">Admin</option>
         </select>
 
-        {/* --- NEW: Conditional rendering for student-only fields --- */}
+        {/* Conditional rendering for student-only fields */}
         {form.role === 'student' && (
           <>
             {/* Field Select */}
@@ -135,7 +132,7 @@ export default function PersonalDetail() {
               value={form.field}
               onChange={(e) => setForm({ ...form, field: e.target.value })}
               className="w-full border p-3 rounded mb-4"
-              required={form.role === 'student'} // Make required only for students
+              required={form.role === 'student'}
             >
               <option value="">Select Field</option>
               <option value="Science">Science</option>
@@ -144,34 +141,68 @@ export default function PersonalDetail() {
               <option value="Diploma">Diploma</option>
             </select>
 
-            {/* Course Select */}
+            {/* --- UPDATED AND EXPANDED COURSE SELECT --- */}
             <select
               value={form.courseInterested}
               onChange={(e) =>
                 setForm({ ...form, courseInterested: e.target.value })
               }
               className="w-full border p-3 rounded mb-6"
-              required={form.role === 'student'} // Make required only for students
+              required={form.role === 'student'}
             >
-              <option value="">Select Course</option>
+              <option value="">Select Course of Interest</option>
+
               <optgroup label="Bachelor's Degrees">
                 <option value="B.Tech">B.Tech (Bachelor of Technology)</option>
-                {/* ... other options */}
+                <option value="B.E.">B.E. (Bachelor of Engineering)</option>
+                <option value="B.Sc.">B.Sc. (Bachelor of Science)</option>
+                <option value="B.Com.">B.Com. (Bachelor of Commerce)</option>
+                <option value="B.A.">B.A. (Bachelor of Arts)</option>
+                <option value="B.B.A.">B.B.A. (Bachelor of Business Administration)</option>
+                <option value="B.C.A.">B.C.A. (Bachelor of Computer Applications)</option>
+                <option value="LL.B.">LL.B. (Bachelor of Laws)</option>
+                <option value="B.Pharm.">B.Pharm. (Bachelor of Pharmacy)</option>
+                <option value="B.Des.">B.Des. (Bachelor of Design)</option>
+                <option value="M.B.B.S.">M.B.B.S. (Bachelor of Medicine, Bachelor of Surgery)</option>
               </optgroup>
+
               <optgroup label="Master's Degrees">
                 <option value="M.Tech">M.Tech (Master of Technology)</option>
-                {/* ... other options */}
+                <option value="M.E.">M.E. (Master of Engineering)</option>
+                <option value="M.Sc.">M.Sc. (Master of Science)</option>
+                <option value="M.Com.">M.Com. (Master of Commerce)</option>
+                <option value="M.A.">M.A. (Master of Arts)</option>
+                <option value="M.B.A.">M.B.A. (Master of Business Administration)</option>
+                <option value="M.C.A.">M.C.A. (Master of Computer Applications)</option>
+                <option value="LL.M.">LL.M. (Master of Laws)</option>
+                <option value="M.Pharm.">M.Pharm. (Master of Pharmacy)</option>
+                <option value="M.D.">M.D. (Doctor of Medicine)</option>
+                <option value="M.S.">M.S. (Master of Surgery)</option>
               </optgroup>
+
+              <optgroup label="Doctoral Degrees">
+                <option value="Ph.D.">Ph.D. (Doctor of Philosophy)</option>
+                <option value="D.Sc.">D.Sc. (Doctor of Science)</option>
+              </optgroup>
+
+              <optgroup label="Diploma & Vocational Courses">
+                <option value="Diploma in Engineering">Diploma in Engineering (Polytechnic)</option>
+                <option value="ITI">ITI (Industrial Training Institute) Course</option>
+                <option value="Diploma in Nursing">Diploma in Nursing</option>
+                <option value="Diploma in Hotel Management">Diploma in Hotel Management</option>
+                <option value="Diploma in Graphic Design">Diploma in Graphic Design</option>
+              </optgroup>
+
+              <option value="Other">Other</option>
             </select>
           </>
         )}
-        
+
         {/* Submit Button */}
         <button
           type="submit"
-          className={`w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors ${loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           disabled={loading}
         >
           {loading ? "Saving..." : "Continue"}

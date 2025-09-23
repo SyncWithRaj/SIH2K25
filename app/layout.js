@@ -4,6 +4,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import ClientWrapper from "./components/ClientWrapper";
 import 'leaflet/dist/leaflet.css';
 
+import Navbar from "./components/Navbar";
+
 // Load Google Fonts
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +32,7 @@ export default function RootLayout({ children }) {
       >
         <ClerkProvider afterSignInUrl="/" afterSignUpUrl="/personal-detail">
           <ClientWrapper>
+      <Navbar />
             {children}
           </ClientWrapper>
         </ClerkProvider>

@@ -130,7 +130,7 @@ export default function CollegesPage() {
     }
 
     return (
-        <div className="flex h-screen font-sans bg-slate-100">
+        <div className="flex h-screen font-sans bg-slate-100 mt-20">
             <aside className="w-full md:w-1/3 lg:w-1/4 h-full bg-slate-50 border-r border-slate-200 flex flex-col">
                 <div className="p-4 border-b border-slate-200">
                     <h1 className="text-xl font-bold text-slate-800">College List</h1>
