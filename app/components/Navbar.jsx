@@ -9,6 +9,7 @@ const navLinks = [
   { href: "/career-map", label: "Career Tree" },
   { href: "/colleges", label: "Find Colleges" },
   { href: "/resources", label: "Resources" },
+  { href: "/scholarships", label: "Scholarships" },
   { href: "/about", label: "About Us" },
 ];
 

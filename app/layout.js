@@ -34,11 +34,11 @@ export default function RootLayout({ children }) {
           <ClientWrapper>
             <Navbar />
             {children}
-            <Script
+            {/* <Script
               id="omnidimension-web-widget"
               strategy="afterInteractive" // loads after page is interactive (like async)
               src="https://backend.omnidim.io/web_widget.js?secret_key=1f41b7e01b49016266f3e7812ffc5325"
-            />
+            /> */}
           </ClientWrapper>
         </ClerkProvider>
       </body>

@@ -19,7 +19,7 @@ const TABS_CONFIG = {
     'BCA': ['All'],
 };
 
-// --- Reusable Components ---
+// --- Reusable Dashboard Components ---
 const LoadingSpinner = () => <div className="flex justify-center p-10"><FaSpinner className="animate-spin text-3xl text-indigo-500" /></div>;
 const ErrorDisplay = ({ error }) => <div className="text-red-600 bg-red-100 p-4 rounded-lg"><FaExclamationTriangle className="inline mr-2" /> Error: {error}</div>;
 const Modal = ({ children, widthClass = 'max-w-2xl' }) => (
@@ -44,43 +44,198 @@ const FormSelect = ({ label, children, ...props }) => (
     </div>
 );
 
+function ScholarshipManagement() {
+    // --- Icon & UI Components specific to Scholarship Management ---
+    const Spinner = () => <div className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>;
+    const PlusIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>;
+    const SaveIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9.25 13.25a.75.75 0 0 0 1.5 0V4.636l2.955 3.129a.75.75 0 0 0 1.09-1.03l-4.25-4.5a.75.75 0 0 0-1.09 0l-4.25 4.5a.75.75 0 1 0 1.09 1.03L9.25 4.636v8.614Z" /><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z" /></svg>;
+    const EditIconSch = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" /><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" /></svg>;
+    const DeleteIconSch = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .53 1.402l.11-.034h11.451l.11.034a.75.75 0 0 0 .53-1.402c-.785-.248-1.57-.391-2.365-.468v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clipRule="evenodd" /></svg>;
+    const AlertIcon = ({ type }) => {
+        const colors = { error: 'text-red-500', success: 'text-green-500' };
+        return (<svg className={`w-6 h-6 flex-shrink-0 ${colors[type]}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm-.75-4.75a.75.75 0 0 0 1.5 0V8.25a.75.75 0 0 0-1.5 0v5Zm0-8.25a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" clipRule="evenodd" /></svg>);
+    };
+    const EmptyIcon = () => <svg className="w-16 h-16 mx-auto text-slate-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m-1.125 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>;
+    const SkeletonCard = () => (
+        <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 animate-pulse">
+            <div className="h-4 bg-slate-200 rounded w-3/4 mb-4"></div>
+            <div className="h-3 bg-slate-200 rounded w-full mb-2"></div>
+            <div className="h-3 bg-slate-200 rounded w-5/6"></div>
+            <div className="mt-5 pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+                <div className="h-9 w-24 bg-slate-200 rounded-lg"></div>
+                <div className="h-9 w-24 bg-slate-200 rounded-lg"></div>
+            </div>
+        </div>
+    );
 
-// --- Main Dashboard Component ---
-export default function AdminDashboard() {
-    const [activeTab, setActiveTab] = useState('users');
-    const tabs = [
-        { id: 'users', label: 'User Management', icon: <FaUsers /> },
-        { id: 'colleges', label: 'College Management', icon: <FaUniversity /> },
-        { id: 'resources', label: 'Resource Management', icon: <FaBook /> },
-    ];
+    const [scholarships, setScholarships] = useState([]);
+    const [formData, setFormData] = useState({ name: '', description: '', url: '' });
+    const [editingId, setEditingId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [notification, setNotification] = useState({ message: '', type: '' });
+
+    useEffect(() => { fetchScholarships(); }, []);
+
+    const clearNotification = () => setNotification({ message: '', type: '' });
+
+    // ✅ FIXED: Restored the full implementation for all handler functions
+    
+    // READ operation
+    const fetchScholarships = async () => {
+        setIsLoading(true);
+        try {
+            const res = await fetch('/api/scholarships');
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+                throw new Error(data.error || 'Failed to fetch data.');
+            }
+            setScholarships(data.data);
+        } catch (err) {
+            setNotification({ message: err.message, type: 'error' });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Handles input changes for the form
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    // CREATE and UPDATE operations
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        clearNotification();
+
+        const method = editingId ? 'PUT' : 'POST';
+        const url = editingId ? `/api/scholarships/${editingId}` : '/api/scholarships';
+
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+                throw new Error(data.error || 'Failed to save scholarship.');
+            }
+            
+            setNotification({ message: `Scholarship successfully ${editingId ? 'updated' : 'added'}!`, type: 'success' });
+            cancelEdit();
+            await fetchScholarships();
+        } catch (err) {
+            setNotification({ message: err.message, type: 'error' });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // Prepares the form for an update
+    const handleEdit = (scholarship) => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setEditingId(scholarship._id);
+        setFormData({ name: scholarship.name, description: scholarship.description, url: scholarship.url });
+        clearNotification();
+    };
+    
+    // Resets the form
+    const cancelEdit = () => {
+        setEditingId(null);
+        setFormData({ name: '', description: '', url: '' });
+    };
+
+    // DELETE operation
+    const handleDelete = async (id) => {
+        if (window.confirm('Are you sure you want to delete this scholarship?')) {
+            try {
+                const res = await fetch(`/api/scholarships/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Failed to delete.');
+                await fetchScholarships();
+                setNotification({ message: 'Scholarship deleted successfully.', type: 'success' });
+            } catch (err) {
+                setNotification({ message: err.message, type: 'error' });
+            }
+        }
+    };
 
     return (
-        <div className="h-[90vh] p-4 sm:p-6 lg:p-8 font-sans mt-18">
-            <div className="max-w-7xl mx-auto">
-                <header className="mb-8  bg-white p-3 rounded-3xl">
-                    <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">Admin Dashboard</h1>
-                    <p className="text-slate-500 mt-2">A central hub for managing your platform's data and users.</p>
-                </header>
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-8">
+            <style>{`@keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; opacity: 0; }`}</style>
 
-                <div className="mb-8">
-                    <div className="bg-white/70 backdrop-blur-lg rounded-full p-2 inline-flex items-center gap-2 border border-slate-200/80 shadow-sm">
-                        {tabs.map(tab => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`whitespace-nowrap py-2 px-5 rounded-full font-semibold text-sm flex items-center gap-2 transition-colors duration-300 ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800'}`}
-                            >
-                                {tab.icon} {tab.label}
+            {/* --- Left Column: Sticky Form --- */}
+            <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-8 self-start">
+                <section className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div className={`p-3 rounded-lg mb-4 ${editingId ? 'bg-indigo-50' : 'bg-slate-50'}`}>
+                        <h3 className="text-xl font-semibold text-slate-800">
+                            {editingId ? 'Editing Scholarship' : 'Add New Scholarship'}
+                        </h3>
+                    </div>
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">Scholarship Name</label>
+                            <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} required className="w-full bg-slate-50 border-slate-300 rounded-lg p-3 transition duration-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                        </div>
+                        <div>
+                            <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
+                            <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required rows="5" className="w-full bg-slate-50 border-slate-300 rounded-lg p-3 transition duration-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                        </div>
+                        <div>
+                            <label htmlFor="url" className="block text-sm font-medium text-slate-700 mb-1.5">Website URL</label>
+                            <input type="url" id="url" name="url" value={formData.url} onChange={handleInputChange} required className="w-full bg-slate-50 border-slate-300 rounded-lg p-3 transition duration-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                        </div>
+                        <div className="flex items-center gap-4 pt-2">
+                            <button type="submit" disabled={isSubmitting} className="inline-flex items-center justify-center gap-2 py-2.5 px-5 font-semibold text-white bg-indigo-600 rounded-lg shadow-sm transform transition-all hover:bg-indigo-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:scale-100">
+                                {isSubmitting ? <Spinner /> : (editingId ? <><SaveIcon /> Save Changes</> : <><PlusIcon /> Create</>)}
                             </button>
+                            {editingId && <button type="button" onClick={cancelEdit} className="py-2.5 px-5 font-semibold text-slate-700 bg-white rounded-lg border border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>}
+                        </div>
+                    </form>
+                    {notification.message && (
+                        <div role="alert" className={`mt-5 flex items-start gap-3 text-sm p-4 rounded-lg ${notification.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'}`}>
+                            <AlertIcon type={notification.type} />
+                            <p>{notification.message}</p>
+                        </div>
+                    )}
+                </section>
+            </div>
+
+            {/* --- Right Column: Scholarship List --- */}
+            <div className="lg:col-span-7 xl:col-span-8 mt-10 lg:mt-0">
+                {isLoading ? (
+                    <div className="space-y-4">
+                        <SkeletonCard /><SkeletonCard /><SkeletonCard />
+                    </div>
+                ) : scholarships.length > 0 ? (
+                    <div className="space-y-4">
+                        {scholarships.map((s, index) => (
+                            <article key={s._id} className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 transition-all duration-300 hover:shadow-md hover:border-indigo-300 fade-in-up" style={{ animationDelay: `${index * 50}ms` }}>
+                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                                    <div className="flex-grow">
+                                        <h3 className="text-lg font-semibold text-slate-900">{s.name}</h3>
+                                        <p className="text-slate-600 mt-1 text-sm">{s.description}</p>
+                                        <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline mt-3 inline-block text-sm font-medium">
+                                            Visit Website &rarr;
+                                        </a>
+                                    </div>
+                                    <div className="flex-shrink-0 flex items-center gap-2 self-end sm:self-start">
+                                        <button onClick={() => handleEdit(s)} className="inline-flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:gap-2 sm:py-2 sm:px-4 text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"><EditIconSch /><span className="hidden sm:inline">Edit</span></button>
+                                        <button onClick={() => handleDelete(s._id)} className="inline-flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:gap-2 sm:py-2 sm:px-4 text-sm font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors"><DeleteIconSch /><span className="hidden sm:inline">Delete</span></button>
+                                    </div>
+                                </div>
+                            </article>
                         ))}
                     </div>
-                </div>
-
-                <main className="animate-fadeIn">
-                    {activeTab === 'users' && <UserManagement />}
-                    {activeTab === 'colleges' && <CollegeManagement />}
-                    {activeTab === 'resources' && <ResourceManagement />}
-                </main>
+                ) : (
+                    <div className="text-center bg-white p-10 rounded-xl border border-dashed border-slate-300 fade-in-up">
+                        <EmptyIcon />
+                        <h3 className="mt-4 text-xl font-semibold text-slate-800">No Scholarships Found</h3>
+                        <p className="mt-2 text-slate-500">Add your first scholarship using the form on the left.</p>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -982,3 +1137,47 @@ const EducationSection = ({ user }) => {
     );
 };
 
+// --- Main Dashboard Component ---
+export default function AdminDashboard() {
+    const [activeTab, setActiveTab] = useState('users');
+    const tabs = [
+        { id: 'users', label: 'User Management', icon: <FaUsers /> },
+        { id: 'colleges', label: 'College Management', icon: <FaUniversity /> },
+        { id: 'resources', label: 'Resource Management', icon: <FaBook /> },
+        // --- ✨ New Tab Added ---
+        { id: 'scholarships', label: 'Scholarship Management', icon: <FaGraduationCap /> },
+    ];
+
+    return (
+        <div className="h-full bg-slate-100/50 p-4 sm:p-6 lg:p-8 font-sans mt-20">
+            <div className="max-w-7xl mx-auto">
+                <header className="mb-8">
+                    <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">Admin Dashboard</h1>
+                    <p className="text-slate-500 mt-2">A central hub for managing your platform's data and users.</p>
+                </header>
+
+                <div className="mb-8">
+                    <div className="bg-white/70 backdrop-blur-lg rounded-full p-2 inline-flex items-center gap-2 border border-slate-200/80 shadow-sm">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`whitespace-nowrap py-2 px-5 rounded-full font-semibold text-sm flex items-center gap-2 transition-colors duration-300 ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800'}`}
+                            >
+                                {tab.icon} {tab.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <main className="animate-fadeIn bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    {activeTab === 'users' && <UserManagement />}
+                    {activeTab === 'colleges' && <CollegeManagement />}
+                    {activeTab === 'resources' && <ResourceManagement />}
+                    {/* --- ✨ New Component Rendered Here --- */}
+                    {activeTab === 'scholarships' && <ScholarshipManagement />}
+                </main>
+            </div>
+        </div>
+    );
+}
