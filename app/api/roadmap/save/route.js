@@ -9,14 +9,15 @@ export async function POST(req) {
     const body = await req.json();
     const { userId, nodes, edges } = body;
 
-    if (!userId) {
-      return NextResponse.json({ message: 'User ID is required.' }, { status: 400 });
+    // Validate incoming data
+    if (!userId || !nodes || !edges) {
+      return NextResponse.json({ message: 'User ID, nodes, and edges are required.' }, { status: 400 });
     }
 
-    // Check if a roadmap for this user already exists
+    // Check if a roadmap for this user already exists to prevent duplicates
     const existingRoadmap = await Roadmap.findOne({ userId });
     if (existingRoadmap) {
-        return NextResponse.json({ message: 'Roadmap already exists. Use PUT to update.' }, { status: 409 });
+      return NextResponse.json({ message: 'Roadmap already exists for this user. Use PUT to update.' }, { status: 409 }); // 409 Conflict
     }
 
     const newRoadmap = await Roadmap.create({ userId, nodes, edges });
@@ -28,7 +29,7 @@ export async function POST(req) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('Failed to save roadmap:', error);
+    console.error('POST /api/roadmap/save Error:', error);
     return NextResponse.json({
       success: false,
       message: 'Failed to save roadmap.',
@@ -44,14 +45,21 @@ export async function PUT(req) {
     const body = await req.json();
     const { userId, nodes, edges } = body;
 
-    if (!userId) {
-      return NextResponse.json({ message: 'User ID is required.' }, { status: 400 });
+    // Validate incoming data
+    if (!userId || !nodes || !edges) {
+      return NextResponse.json({ message: 'User ID, nodes, and edges are required.' }, { status: 400 });
     }
 
+    // This operation finds a roadmap by userId and updates it. 
+    // If it doesn't exist, `upsert: true` will create it.
     const updatedRoadmap = await Roadmap.findOneAndUpdate(
-      { userId: userId }, // Find document by userId
-      { nodes: nodes, edges: edges }, // Data to update
-      { new: true, upsert: true } // Options: return the updated doc, and create if it doesn't exist
+      { userId: userId },             // Find document by userId
+      { $set: { nodes, edges } },      // Use $set to update only the specified fields
+      { 
+        new: true,                    // Return the updated document after the update
+        upsert: true,                 // Create the document if it doesn't exist
+        runValidators: true,          // ✅ Ensures schema validation rules are applied on update
+      } 
     );
 
     return NextResponse.json({
@@ -61,7 +69,7 @@ export async function PUT(req) {
     }, { status: 200 });
 
   } catch (error) {
-    console.error('Failed to update roadmap:', error);
+    console.error('PUT /api/roadmap/save Error:', error);
     return NextResponse.json({
       success: false,
       message: 'Failed to update roadmap.',
@@ -69,3 +77,4 @@ export async function PUT(req) {
     }, { status: 500 });
   }
 }
+

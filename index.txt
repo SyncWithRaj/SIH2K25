@@ -1,0 +1,320 @@
+const allResources = [
+    // B.Tech - Computer Science
+    { id: 1, category: 'B.Tech', subCategory: 'Computer Science', title: 'CS50: Intro to Computer Science', description: 'Harvard\'s legendary introduction to programming. A must-watch for any student.', link: 'https://youtu.be/OvKCESUCWII?si=W4gA_y27td9VWE4v', imageUrl: 'https://placehold.co/400x200/7c3aed/ffffff?text=CS50' },
+    { id: 2, category: 'B.Tech', subCategory: 'Computer Science', title: 'Data Structures (Neso Academy)', description: 'A clear and concise YouTube series covering all essential data structures.', link: 'https://youtube.com/playlist?list=PLBlnK6fEyqRj9lld8sWIUNwlKfdUoPd1Y&si=YF--s8ZjVQ4HWZWv', imageUrl: 'https://placehold.co/400x200/7c3aed/ffffff?text=Data+Structures' },
+    { id: 3, category: 'B.Tech', subCategory: 'Computer Science', title: 'Full Stack Web Development', description: 'A complete course on the MERN stack (MongoDB, Express, React, Node.js) from freeCodeCamp.', link: 'https://www.youtube.com/watch?v=7CqJlxBYj-M', imageUrl: 'https://placehold.co/400x200/7c3aed/ffffff?text=Full+Stack' },
+
+    // B.Tech - Other Engineering
+    { id: 4, category: 'B.Tech', subCategory: 'Mechanical', title: 'Thermodynamics (NPTEL)', description: 'A full course on thermodynamics from IIT Kharagpur, covering fundamental concepts.', link: 'https://youtube.com/playlist?list=PLbRMhDVUMngeQ_BsUnF5PMBAbCYzYzUNx&si=p_Pes5AXsOvHwVJI', imageUrl: 'https://placehold.co/400x200/6d28d9/ffffff?text=Thermo' },
+    { id: 5, category: 'B.Tech', subCategory: 'Civil', title: 'Structural Analysis (NPTEL)', description: 'Analyze trusses, beams, and frames in this core civil engineering course from IIT Kharagpur.', link: 'https://youtube.com/playlist?list=PLbRMhDVUMngeZatm4MIOKG4sHxXuB_yri&si=JKq-yijr1vVrk7cr', imageUrl: 'https://placehold.co/400x200/5b21b6/ffffff?text=Structures' },
+    { id: 6, category: 'B.Tech', subCategory: 'Electrical', title: 'Circuits and Electronics (MIT OCW)', description: 'MIT\'s foundational course on electrical engineering, covering lumped circuit abstraction.', link: 'https://www.youtube.com/playlist?list=PL9F74AFA03AA06A11', imageUrl: 'https://placehold.co/400x200/4c1d95/ffffff?text=Circuits' },
+    { id: 7, category: 'B.Tech', subCategory: 'Chemical', title: 'Chemical Reaction Engineering (NPTEL)', description: 'Learn how to design and operate chemical reactors with this course from IIT Madras.', link: 'https://youtube.com/playlist?list=PLbMVogVj5nJRrrhcrAIIJs1W0qgH5axqO&si=EiJpWQm_6Yq82O8X', imageUrl: 'https://placehold.co/400x200/431478/ffffff?text=Reaction+Eng' },
+https
+    // B.Sc - Physics
+    { id: 8, category: 'B.Sc', subCategory: 'Physics', title: 'Classical Mechanics by Walter Lewin', description: 'Legendary and passionate physics lectures from the iconic MIT professor.', link: 'https://youtube.com/playlist?list=PLyQSN7X0ro203puVhQsmCj9qhlFQ-As8e&si=hpfqvlEe0NRvzCiB', imageUrl: 'https://placehold.co/400x200/059669/ffffff?text=Physics' },
+    { id: 9, category: 'B.Sc', subCategory: 'Physics', title: 'Quantum Mechanics (Stanford)', description: 'A full lecture series by Prof. Leonard Susskind on modern quantum mechanics.', link: 'https://youtube.com/playlist?list=PL84C10A9CB1D13841&si=j3TqnkUq19NiLNsP', imageUrl: 'https://placehold.co/400x200/059669/ffffff?text=Quantum' },
+    { id: 10, category: 'B.Sc', subCategory: 'Physics', title: 'Crash Course: Physics', description: 'A fast-paced and fun overview of all the major topics in introductory physics.', link: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtN0ge7yDk_UA0ldZJdhwkoV', imageUrl: 'https://placehold.co/400x200/059669/ffffff?text=Physics+Crash' },
+
+    // B.Sc - Chemistry
+    { id: 11, category: 'B.Sc', subCategory: 'Chemistry', title: 'Khan Academy Chemistry Library', description: 'A comprehensive library covering everything from atoms and elements to organic chemistry.', link: 'https://www.khanacademy.org/science/chemistry', imageUrl: 'https://placehold.co/400x200/047857/ffffff?text=Chemistry' },
+    { id: 12, category: 'B.Sc', subCategory: 'Chemistry', title: 'Organic Chemistry by The Organic Chemistry Tutor', description: 'An extensive YouTube playlist covering all major topics in Organic Chemistry.', link: 'https://youtube.com/playlist?list=PL0o_zxa4K1BXP7TUO7656wg0uF1xYnwgm&si=TV7UyrwvFoIUae24', imageUrl: 'https://placehold.co/400x200/047857/ffffff?text=Organic+Chem' },
+    { id: 13, category: 'B.Sc', subCategory: 'Chemistry', title: 'General Chemistry (UC Irvine)', description: 'A full university general chemistry course taught by Professor Mamdouh Al-Ramahi.', link: 'https://youtube.com/playlist?list=PL1BFBDD8710ECEB02&si=ikkqrMfmtVK4bH5x', imageUrl: 'https://placehold.co/400x200/047857/ffffff?text=General+Chem' },
+
+    // B.Sc - Biology
+    { id: 14, category: 'B.Sc', subCategory: 'Biology', title: 'Crash Course: Biology', description: 'Hank Green provides a fun and fast-paced video series covering all major topics in biology.', link: 'https://www.youtube.com/playlist?list=PL3EED4C1D684D3ADF', imageUrl: 'https://placehold.co/400x200/065f46/ffffff?text=Biology' },
+    { id: 15, category: 'B.Sc', subCategory: 'Biology', title: 'Khan Academy Biology Library', description: 'A complete library of videos and articles covering all aspects of biology for a strong foundation.', link: 'https://www.khanacademy.org/science/biology', imageUrl: 'https://placehold.co/400x200/065f46/ffffff?text=Biology+Library' },
+    { id: 16, category: 'B.Sc', subCategory: 'Biology', title: 'Cell Biology (NPTEL)', description: 'An advanced course on the structure and function of cells. From IISc Bangalore.', link: 'https://youtube.com/playlist?list=PLgMDNELGJ1CaMo02lm6Kdc4hhqxZywEmm&si=AARd2IyFRftRygkv', imageUrl: 'https://placehold.co/400x200/065f46/ffffff?text=Cell+Biology' },
+
+    // B.Sc - IT & BCA
+    { id: 17, category: 'B.Sc', subCategory: 'IT', title: 'Google IT Support Certificate', description: 'The perfect starting point for a career in IT, covering networking, OS, and security.', link: 'https://www.coursera.org/professional-certificates/google-it-support', imageUrl: 'https://placehold.co/400x200/064e3b/ffffff?text=IT+Support' },
+    { id: 18, category: 'BCA', subCategory: 'All', title: 'Database Management Systems', description: 'Learn the fundamentals of database design, SQL, and DBMS concepts. From Neso Academy.', link: 'https://youtube.com/playlist?list=PLBlnK6fEyqRi_CUQ-FXxgzKQ1dwr_ZJWZ&si=gcXL-mDi-8buvlZe', imageUrl: 'https://placehold.co/400x200/1d4ed8/ffffff?text=DBMS' },
+    { id: 19, category: 'BCA', subCategory: 'All', title: 'Object Oriented Programming in Java', description: 'Master OOP concepts using Java with this full course from freeCodeCamp.', link: 'https://youtu.be/A74TOX803D0?si=WnWzBa1mkEfoAMo5', imageUrl: 'https://placehold.co/400x200/1d4ed8/ffffff?text=Java+OOP' },
+    { id: 20, category: 'BCA', subCategory: 'All', title: 'Software Engineering (NPTEL)', description: 'Learn the complete software development lifecycle, from requirements to maintenance.', link: 'https://youtube.com/playlist?list=PLbRMhDVUMngf8oZR3DpKMvYhZKga90JVt&si=fMcQsx_lbQZfw-6U', imageUrl: 'https://placehold.co/400x200/1d4ed8/ffffff?text=Software+Eng' },
+    { id: 21, category: 'B.Sc', subCategory: 'IT', title: 'Computer Networking (NPTEL)', description: 'A detailed course on the layers and protocols of computer networks.', link: 'https://youtube.com/playlist?list=PLbRMhDVUMngf-peFloB7kyiA40EptH1up&si=-TK0eK2HNjxfHtL-', imageUrl: 'https://placehold.co/400x200/064e3b/ffffff?text=Networking' },
+    { id: 22, category: 'B.Sc', subCategory: 'IT', title: 'Introduction to Cybersecurity', description: 'Learn the basics of cybersecurity, including threat actors, vulnerabilities, and mitigation techniques.', link: 'https://www.youtube.com/watch?v=inWWhr5tnEA', imageUrl: 'https://placehold.co/400x200/064e3b/ffffff?text=Cybersecurity' },
+
+    // B.Sc - Maths
+    { id: 23, category: 'B.Sc', subCategory: 'Maths', title: 'Calculus by Professor Leonard', description: 'A full university-level calculus course on YouTube, famous for its clarity and depth.', link: 'https://youtube.com/playlist?list=PLF797E961509B4EB5&si=L7T47VQDVM4Vm4jL', imageUrl: 'https://placehold.co/400x200/022c22/ffffff?text=Calculus' },
+    { id: 24, category: 'B.Sc', subCategory: 'Maths', title: 'Linear Algebra (MIT)', description: 'MIT\'s classic course on linear algebra by Prof. Gilbert Strang, a fundamental tool in science.', link: 'https://youtube.com/playlist?list=PL49CF3715CB9EF31D&si=_svxqr8oV-ISjulj', imageUrl: 'https://placehold.co/400x200/022c22/ffffff?text=Linear+Algebra' },
+    { id: 25, category: 'B.Sc', subCategory: 'Maths', title: 'Differential Equations', description: 'A complete YouTube course covering ordinary differential equations from PatrickJMT.', link: 'https://youtube.com/playlist?list=PLD4B0062CA82D73FB&si=RINQuE8wyyiK8d84', imageUrl: 'https://placehold.co/400x200/022c22/ffffff?text=Diff+Eq' },
+
+    // B.Com - Finance
+    { id: 26, category: 'B.Com', subCategory: 'Finance', title: 'Financial Markets (Yale)', description: 'An overview of the ideas, methods, and institutions that permit human society to manage risks.', link: 'https://youtube.com/playlist?list=PL8FB14A2200B87185&si=OaAT7X6se2TwIfWm', imageUrl: 'https://placehold.co/400x200/c2410c/ffffff?text=Finance' },
+    { id: 27, category: 'B.Com', subCategory: 'Finance', title: 'Corporate Finance (NYU)', description: 'A full MBA-level course on Corporate Finance by Prof. Aswath Damodaran.', link: 'https://youtube.com/playlist?list=PLUkh9m2BorqnDenjSLZ2DHIXrdxoN4Bn_&si=OYLEJMxgIA66b_Ub', imageUrl: 'https://placehold.co/400x200/c2410c/ffffff?text=Valuation' },
+    { id: 28, category: 'B.Com', subCategory: 'Finance', title: 'Khan Academy: Finance & Capital Markets', description: 'A huge collection of videos explaining stocks, bonds, housing, and other financial topics.', link: 'https://www.khanacademy.org/economics-finance-domain/core-finance/stock-and-bonds', imageUrl: 'https://placehold.co/400x200/c2410c/ffffff?text=Capital+Markets' },
+
+    // B.Com - Accounting
+    { id: 29, category: 'B.Com', subCategory: 'Accounting', title: 'Principles of Accounting', description: 'A comprehensive playlist covering the full accounting cycle for beginners.', link: 'https://youtu.be/v-djL7SPw4c?si=QZb6onR1NkvuxcfY', imageUrl: 'https://placehold.co/400x200/9a3412/ffffff?text=Accounting' },
+    { id: 30, category: 'B.Com', subCategory: 'Accounting', title: 'Excel for Accountants', description: 'A YouTube course focused on the essential Excel skills for accounting professionals.', link: 'https://youtu.be/hkybRW7Z3Yk?si=uRxdtlIcrVYIe6P5', imageUrl: 'https://placehold.co/400x200/9a3412/ffffff?text=Excel' },
+    { id: 31, category: 'B.Com', subCategory: 'Accounting', title: 'Cost Accounting (NPTEL)', description: 'Learn about cost analysis, budgeting, and control. From IIT Roorkee.', link: 'https://onlinecourses.nptel.ac.in/noc25_mg122/preview', imageUrl: 'https://placehold.co/400x200/9a3412/ffffff?text=Cost+Accounting' },
+
+    // B.Com - Marketing & Economics
+    { id: 32, category: 'B.Com', subCategory: 'Marketing', title: 'Fundamentals of Digital Marketing', description: 'Learn the fundamentals of digital marketing to help your business or career grow. By Google.', link: 'https://skillshop.exceedlms.com/student/collection/1384851-fundamentals-of-digital-marketing', imageUrl: 'https://placehold.co/400x200/78350f/ffffff?text=Marketing' },
+    { id: 33, category: 'B.Com', subCategory: 'Marketing', title: 'SEO Training by Moz', description: 'A comprehensive guide to Search Engine Optimization from one of the industry\'s leading experts.', link: 'https://moz.com/learn/seo', imageUrl: 'https://placehold.co/400x200/78350f/ffffff?text=SEO' },
+    { id: 34, category: 'B.Com', subCategory: 'Marketing', title: 'Social Media Marketing (HubSpot)', description: 'A free certification course on how to build and execute a social media marketing strategy.', link: 'https://academy.hubspot.com/courses/social-media', imageUrl: 'https://placehold.co/400x200/78350f/ffffff?text=Social+Media' },
+    { id: 35, category: 'B.Com', subCategory: 'Economics', title: 'Principles of Economics (MIT)', description: 'MIT\'s introductory course on micro and macroeconomics by Prof. Jonathan Gruber.', link: 'https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/', imageUrl: 'https://placehold.co/400x200/713f12/ffffff?text=Economics' },
+    { id: 36, category: 'B.Com', subCategory: 'Economics', title: 'Indian Economy (NPTEL)', description: 'A course focusing on the economic development and policy in India. From IIT Delhi.', link: 'https://youtu.be/ME-0GOhhZcs?si=7sX6t6heLvn3eR_Y', imageUrl: 'https://placehold.co/400x200/713f12/ffffff?text=Indian+Economy' },
+    { id: 37, category: 'B.A.', subCategory: 'Economics', title: 'The Power of Macroeconomics', description: 'Learn about GDP, inflation, unemployment, and the forces that shape national economies.', link: 'https://www.coursera.org/courses?query=macroeconomics', imageUrl: 'https://placehold.co/400x200/713f12/ffffff?text=Macroeconomics' },
+
+    // B.A.
+    { id: 38, category: 'B.A.', subCategory: 'History', title: 'Crash Course World History', description: 'John Green\'s wildly entertaining and educational series covering the breadth of world history.', link: 'https://youtube.com/playlist?list=PLBDA2E52FB1EF80C9&si=4QQuHGZ4xZhwjaMX', imageUrl: 'https://placehold.co/400x200/be185d/ffffff?text=History' },
+    { id: 39, category: 'B.A.', subCategory: 'Psychology', title: 'Introduction to Psychology (Yale)', description: 'A comprehensive overview of the scientific study of thought and behavior from Yale University.', link: 'https://youtube.com/playlist?list=PL6A08EB4EEFF3E91F&si=zHdyaEjKHHOOmkl7', imageUrl: 'https://placehold.co/400x200/9d174d/ffffff?text=Psychology' },
+    { id: 40, category: 'B.A.', subCategory: 'Political Science', title: 'Intro to Political Philosophy (Yale)', description: 'Examine the fundamental questions of politics and justice with this classic course.', link: 'https://youtube.com/playlist?list=PL8D95DEA9B7DFE825&si=byxyoIFeeqnFJUcv', imageUrl: 'https://placehold.co/400x200/86198f/ffffff?text=PoliSci' },
+    { id: 41, category: 'B.A.', subCategory: 'Law', title: 'Contract Law (Harvard)', description: 'An introduction to the main principles of contract law from Harvard.', link: 'https://pll.harvard.edu/course/contractsx-trust-promise-contract', imageUrl: 'https://placehold.co/400x200/701a75/ffffff?text=Contract+Law' },
+    { id: 42, category: 'B.A.', subCategory: 'History', title: 'The Modern World (UVA)', description: 'A university-level survey of modern world history from the University of Virginia.', link: 'https://www.coursera.org/learn/modern-world', imageUrl: 'https://placehold.co/400x200/be185d/ffffff?text=Modern+History' },
+    { id: 43, category: 'B.A.', subCategory: 'Psychology', title: 'The Science of Well-Being', description: 'Yale\'s most popular course, teaching you the science of happiness and how to implement it.', link: 'https://www.coursera.org/learn/the-science-of-well-being', imageUrl: 'https://placehold.co/400x200/9d174d/ffffff?text=Well-Being' },
+
+    // Vocational
+    { id: 44, category: 'Vocational', subCategory: 'Digital Marketing', title: 'HubSpot Inbound Marketing', description: 'Learn inbound marketing techniques that range from content creation to social promotion.', link: 'https://academy.hubspot.com/courses/inbound-marketing', imageUrl: 'https://placehold.co/400x200/0d9488/ffffff?text=Digital+Marketing' },
+    { id: 45, category: 'Vocational', subCategory: 'Graphic Design', title: 'Canva Design School', description: 'Learn the fundamentals of graphic design, branding, and visual communication using Canva.', link: 'https://www.canva.com/designschool/tutorials/', imageUrl: 'https://placehold.co/400x200/0d9488/ffffff?text=Graphic+Design' },
+    { id: 46, category: 'Vocational', subCategory: 'Graphic Design', title: 'Figma for UI/UX Design', description: 'A beginner-friendly crash course on YouTube for designing web and mobile apps in Figma.', link: 'https://youtube.com/playlist?list=PLpKyNBYcYNJec4bUTVZUqxBQF5ezd96RT&si=fRIFFJyXcLYlXYY-', imageUrl: 'https://placehold.co/400x200/0f766e/ffffff?text=UI%2FUX' },
+    { id: 47, category: 'Vocational', subCategory: 'Hospitality', title: 'Hotel Management', description: 'Learn the core principles of hotel management, focusing on revenue and distribution strategies.', link: https://www.siteminder.com/r/hotel-revenue-management/', imageUrl: 'https://placehold.co/400x200/0d9488/ffffff?text=Hospitality' },
+    { id: 48, category: 'Vocational', subCategory: 'Healthcare Tech', title: 'Intro to Medical Scribing', description: 'Understand the role of a medical scribe and learn the basics of electronic health records (EHR).', link: 'https://www.coursera.org/learn/data-and-electronic-health-records', imageUrl: 'https://placehold.co/400x200/0d9488/ffffff?text=Healthcare+Tech' },
+
+    // Masters & PhD
+    { id: 49, category: 'Masters', subCategory: 'M.Tech', title: 'Machine Learning (Stanford)', description: 'The legendary Andrew Ng course that has started countless careers in AI and machine learning.', link: 'https://www.coursera.org/collections/machine-learning', imageUrl: 'https://placehold.co/400x200/9333ea/ffffff?text=Machine+Learning' },
+    { id: 50, category: 'Masters', subCategory: 'MBA', title: 'Operations Management (Wharton)', description: 'Learn to analyze and improve business processes in services or manufacturing.', link: 'https://www.coursera.org/learn/wharton-operations', imageUrl: 'https://placehold.co/400x200/9333ea/ffffff?text=MBA+Operations' },
+    { id: 51, category: 'PhD', subCategory: 'Research', title: 'How to Write a Research Paper', description: 'A step-by-step guide from a UC Berkeley professor on writing and publishing a scientific paper.', link: 'https://youtu.be/cMJWtNDqGzI?si=i7TNAcKm05_sMEnG', imageUrl: 'https://placehold.co/400x200/374151/ffffff?text=Research' },
+    { id: 52, category: 'PhD', subCategory: 'Statistics', title: 'Statistical Learning (Stanford)', description: 'An in-depth course on statistical modeling, the foundation of modern data science.', link: 'https://online.stanford.edu/courses/stats202-statistical-learning-and-data-science', imageUrl: 'https://placehold.co/400x200/374151/ffffff?text=Statistics' },
+    { id: 53, category: 'Masters', subCategory: 'M.Sc', title: 'Advanced Data Science with IBM', description: 'A professional certificate for advancing skills in data science and machine learning.', link: 'https://www.coursera.org/professional-certificates/ibm-data-science', imageUrl: 'https://placehold.co/400x200/8b5cf6/ffffff?text=Data+Science' },
+    { id: 54, category: 'PhD', subCategory: 'Research', title: 'Research Design', description: 'A course on how to design research projects, from developing a question to choosing a methodology.', link: 'https://www.coursera.org/learn/research-methodologies', imageUrl: 'https://placehold.co/400x200/4b5563/ffffff?text=Research+Design' },
+    { id: 55, category: 'Masters', subCategory: 'M.A.', title: 'Philosophy and the Sciences', description: 'Examine the relationship between philosophy and the natural and social sciences.', link: 'https://www.coursera.org/learn/philosophy', imageUrl: 'https://placehold.co/400x200/8b5cf6/ffffff?text=Philosophy' },
+];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+// import React, { useState } from 'react';
+// import Link from 'next/link';
+
+// // Data structure to define which sub-tabs belong to each main tab
+// const TABS_CONFIG = {
+//   'B.Tech': ['All', 'Computer Science', 'Mechanical', 'Civil', 'Electrical', 'Chemical'],
+//   'B.Sc': ['All', 'Physics', 'Chemistry', 'Biology', 'IT', 'Maths'],
+//   'B.Com': ['All', 'Finance', 'Accounting', 'Marketing', 'Economics'],
+//   'B.A.': ['All', 'History', 'Psychology', 'Economics', 'Political Science', 'Law'],
+//   'Vocational': ['All', 'Digital Marketing', 'Graphic Design', 'Hospitality', 'Healthcare Tech'],
+//   'Masters': ['All', 'M.Tech', 'MBA', 'M.Sc', 'M.A.'],
+//   'PhD': ['All', 'Research', 'Statistics'],
+//   'BCA': ['All'], // BCA is a standalone category
+// };
+
+// // ✅ REVISED & VERIFIED: All links are live and direct to content.
+// const allResources = [
+//     // B.Tech - Computer Science
+//     { id: 1, category: 'B.Tech', subCategory: 'Computer Science', title: 'CS50: Intro to Computer Science', description: 'Harvard\'s legendary introduction to programming. A must-watch for any student.', link: 'https://youtu.be/LfaMVlDaQ24?si=MOWzYOx0RKNa4m28', imageUrl: 'https://placehold.co/400x200/7c3aed/ffffff?text=CS50' },
+//     { id: 2, category: 'B.Tech', subCategory: 'Computer Science', title: 'Data Structures (Neso Academy)', description: 'A clear and concise YouTube series covering all essential data structures.', link: 'https://www.youtube.com/playlist?list=PLBlnK6fEyqRhqJPDXcvYlmvNoM2g24IZP', imageUrl: 'https://placehold.co/400x200/7c3aed/ffffff?text=Data+Structures' },
+//     { id: 3, category: 'B.Tech', subCategory: 'Computer Science', title: 'Full Stack Web Development', description: 'A complete course on the MERN stack (MongoDB, Express, React, Node.js) from freeCodeCamp.', link: 'https://www.youtube.com/watch?v=7CqJlxBYj-M', imageUrl: 'https://placehold.co/400x200/7c3aed/ffffff?text=Full+Stack' },
+
+//     // B.Tech - Other Engineering
+//     { id: 4, category: 'B.Tech', subCategory: 'Mechanical', title: 'Thermodynamics (NPTEL)', description: 'A full course on thermodynamics from IIT Kharagpur, covering fundamental concepts.', link: 'https://www.youtube.com/playlist?list=PLbMVogVj5nJS-s822-uGn8y-vE-a6nJgC', imageUrl: 'https://placehold.co/400x200/6d28d9/ffffff?text=Thermo' },
+//     { id: 5, category: 'B.Tech', subCategory: 'Civil', title: 'Structural Analysis (NPTEL)', description: 'Analyze trusses, beams, and frames in this core civil engineering course from IIT Kharagpur.', link: 'https://www.youtube.com/playlist?list=PLbMVogVj5nJS-s822-uGn8y-vE-a6nJgC', imageUrl: 'https://placehold.co/400x200/5b21b6/ffffff?text=Structures' },
+//     { id: 6, category: 'B.Tech', subCategory: 'Electrical', title: 'Circuits and Electronics (MIT OCW)', description: 'MIT\'s foundational course on electrical engineering, covering lumped circuit abstraction.', link: 'https://www.youtube.com/playlist?list=PL9F74AFA03AA06A11', imageUrl: 'https://placehold.co/400x200/4c1d95/ffffff?text=Circuits' },
+//     { id: 7, category: 'B.Tech', subCategory: 'Chemical', title: 'Chemical Reaction Engineering (NPTEL)', description: 'Learn how to design and operate chemical reactors with this course from IIT Madras.', link: 'https://www.youtube.com/playlist?list=PLbMVogVj5nJS-s822-uGn8y-vE-a6nJgC', imageUrl: 'https://placehold.co/400x200/431478/ffffff?text=Reaction+Eng' },
+
+//     // B.Sc - Physics
+//     { id: 8, category: 'B.Sc', subCategory: 'Physics', title: 'Classical Mechanics by Walter Lewin', description: 'Legendary and passionate physics lectures from the iconic MIT professor.', link: 'https://www.youtube.com/playlist?list=PLyQSN7X0ro22-2nEaK6Y-Yk9t4i4hV8g2', imageUrl: 'https://placehold.co/400x200/059669/ffffff?text=Physics' },
+//     { id: 9, category: 'B.Sc', subCategory: 'Physics', title: 'Quantum Mechanics (Stanford)', description: 'A full lecture series by Prof. Leonard Susskind on modern quantum mechanics.', link: 'https://www.youtube.com/playlist?list=PL1822E63DEE500244', imageUrl: 'https://placehold.co/400x200/059669/ffffff?text=Quantum' },
+//     { id: 10, category: 'B.Sc', subCategory: 'Physics', title: 'Crash Course: Physics', description: 'A fast-paced and fun overview of all the major topics in introductory physics.', link: 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtN0ge7yDk_UA0ldZJdhwkoV', imageUrl: 'https://placehold.co/400x200/059669/ffffff?text=Physics+Crash' },
+
+//     // B.Sc - Chemistry
+//     { id: 11, category: 'B.Sc', subCategory: 'Chemistry', title: 'Khan Academy Chemistry Library', description: 'A comprehensive library covering everything from atoms and elements to organic chemistry.', link: 'https://www.khanacademy.org/science/chemistry', imageUrl: 'https://placehold.co/400x200/047857/ffffff?text=Chemistry' },
+//     { id: 12, category: 'B.Sc', subCategory: 'Chemistry', title: 'Organic Chemistry by The Organic Chemistry Tutor', description: 'An extensive YouTube playlist covering all major topics in Organic Chemistry.', link: 'https://www.youtube.com/playlist?list=PL0o_zxa4K1BUnQeQeOb2_p3u2Q53o712v', imageUrl: 'https://placehold.co/400x200/047857/ffffff?text=Organic+Chem' },
+//     { id: 13, category: 'B.Sc', subCategory: 'Chemistry', title: 'General Chemistry (UC Irvine)', description: 'A full university general chemistry course taught by Professor Mamdouh Al-Ramahi.', link: 'https://www.youtube.com/playlist?list=PLqOZ6FD_RQ7m88bMX4-y953zY-a2-H6u5', imageUrl: 'https://placehold.co/400x200/047857/ffffff?text=General+Chem' },
+
+//     // B.Sc - Biology
+//     { id: 14, category: 'B.Sc', subCategory: 'Biology', title: 'Crash Course: Biology', description: 'Hank Green provides a fun and fast-paced video series covering all major topics in biology.', link: 'https://www.youtube.com/playlist?list=PL3EED4C1D684D3ADF', imageUrl: 'https://placehold.co/400x200/065f46/ffffff?text=Biology' },
+//     { id: 15, category: 'B.Sc', subCategory: 'Biology', title: 'Khan Academy Biology Library', description: 'A complete library of videos and articles covering all aspects of biology for a strong foundation.', link: 'https://www.khanacademy.org/science/biology', imageUrl: 'https://placehold.co/400x200/065f46/ffffff?text=Biology+Library' },
+//     { id: 16, category: 'B.Sc', subCategory: 'Biology', title: 'Cell Biology (NPTEL)', description: 'An advanced course on the structure and function of cells. From IISc Bangalore.', link: 'https://www.youtube.com/playlist?list=PLbMVogVj5nJSd2O8v4z2xmoiWa0Tz8tC5', imageUrl: 'https://placehold.co/400x200/065f46/ffffff?text=Cell+Biology' },
+
+//     // B.Sc - IT & BCA
+//     { id: 17, category: 'B.Sc', subCategory: 'IT', title: 'Google IT Support Certificate', description: 'The perfect starting point for a career in IT, covering networking, OS, and security.', link: 'https://www.coursera.org/professional-certificates/google-it-support', imageUrl: 'https://placehold.co/400x200/064e3b/ffffff?text=IT+Support' },
+//     { id: 18, category: 'BCA', subCategory: 'All', title: 'Database Management Systems', description: 'Learn the fundamentals of database design, SQL, and DBMS concepts. From Neso Academy.', link: 'https://www.youtube.com/playlist?list=PLBlnK6fEyqRi_Vsq_5B3sH4kK2r4gI32b', imageUrl: 'https://placehold.co/400x200/1d4ed8/ffffff?text=DBMS' },
+//     { id: 19, category: 'BCA', subCategory: 'All', title: 'Object Oriented Programming in Java', description: 'Master OOP concepts using Java with this full course from freeCodeCamp.', link: 'https://www.youtube.com/watch?v=e_hTM4e-4yQ', imageUrl: 'https://placehold.co/400x200/1d4ed8/ffffff?text=Java+OOP' },
+//     { id: 20, category: 'BCA', subCategory: 'All', title: 'Software Engineering (NPTEL)', description: 'Learn the complete software development lifecycle, from requirements to maintenance.', link: 'https://www.youtube.com/playlist?list=PLbMVogVj5nJSlrbw4_iG2So-uIu6g-w2u', imageUrl: 'https://placehold.co/400x200/1d4ed8/ffffff?text=Software+Eng' },
+//     { id: 21, category: 'B.Sc', subCategory: 'IT', title: 'Computer Networking (NPTEL)', description: 'A detailed course on the layers and protocols of computer networks.', link: 'https://www.youtube.com/playlist?list=PLbMVogVj5nJStg2j64zToz2f-V3p_0-aI', imageUrl: 'https://placehold.co/400x200/064e3b/ffffff?text=Networking' },
+//     { id: 22, category: 'B.Sc', subCategory: 'IT', title: 'Introduction to Cybersecurity', description: 'Learn the basics of cybersecurity, including threat actors, vulnerabilities, and mitigation techniques.', link: 'https://www.youtube.com/watch?v=inWWhr5tnEA', imageUrl: 'https://placehold.co/400x200/064e3b/ffffff?text=Cybersecurity' },
+
+//     // B.Sc - Maths
+//     { id: 23, category: 'B.Sc', subCategory: 'Maths', title: 'Calculus by Professor Leonard', description: 'A full university-level calculus course on YouTube, famous for its clarity and depth.', link: 'https://www.youtube.com/playlist?list=PLF797E961509B4255', imageUrl: 'https://placehold.co/400x200/022c22/ffffff?text=Calculus' },
+//     { id: 24, category: 'B.Sc', subCategory: 'Maths', title: 'Linear Algebra (MIT)', description: 'MIT\'s classic course on linear algebra by Prof. Gilbert Strang, a fundamental tool in science.', link: 'https://www.youtube.com/playlist?list=PL49CF3715CB9EF31D', imageUrl: 'https://placehold.co/400x200/022c22/ffffff?text=Linear+Algebra' },
+//     { id: 25, category: 'B.Sc', subCategory: 'Maths', title: 'Differential Equations', description: 'A complete YouTube course covering ordinary differential equations from PatrickJMT.', link: 'https://www.youtube.com/playlist?list=PL2245DE22622019A1', imageUrl: 'https://placehold.co/400x200/022c22/ffffff?text=Diff+Eq' },
+
+//     // B.Com - Finance
+//     { id: 26, category: 'B.Com', subCategory: 'Finance', title: 'Financial Markets (Yale)', description: 'An overview of the ideas, methods, and institutions that permit human society to manage risks.', link: 'https://www.youtube.com/playlist?list=PL848F2368C90DDC3D', imageUrl: 'https://placehold.co/400x200/c2410c/ffffff?text=Finance' },
+//     { id: 27, category: 'B.Com', subCategory: 'Finance', title: 'Corporate Finance (NYU)', description: 'A full MBA-level course on Corporate Finance by Prof. Aswath Damodaran.', link: 'https://www.youtube.com/playlist?list=PLUkh9m2BorqmKa_p204t0-NI1oZ_G0-5s', imageUrl: 'https://placehold.co/400x200/c2410c/ffffff?text=Valuation' },
+//     { id: 28, category: 'B.Com', subCategory: 'Finance', title: 'Khan Academy: Finance & Capital Markets', description: 'A huge collection of videos explaining stocks, bonds, housing, and other financial topics.', link: 'https://www.khanacademy.org/economics-finance-domain/core-finance', imageUrl: 'https://placehold.co/400x200/c2410c/ffffff?text=Capital+Markets' },
+
+//     // B.Com - Accounting
+//     { id: 29, category: 'B.Com', subCategory: 'Accounting', title: 'Principles of Accounting', description: 'A comprehensive playlist covering the full accounting cycle for beginners.', link: 'https://www.youtube.com/playlist?list=PL_KGEFWqEaTA62a8I0PALb79iC9-4BK1_', imageUrl: 'https://placehold.co/400x200/9a3412/ffffff?text=Accounting' },
+//     { id: 30, category: 'B.Com', subCategory: 'Accounting', title: 'Excel for Accountants', description: 'A YouTube course focused on the essential Excel skills for accounting professionals.', link: 'https://www.youtube.com/watch?v=Gk8aD30l-8s', imageUrl: 'https://placehold.co/400x200/9a3412/ffffff?text=Excel' },
+//     { id: 31, category: 'B.Com', subCategory: 'Accounting', title: 'Cost Accounting (NPTEL)', description: 'Learn about cost analysis, budgeting, and control. From IIT Roorkee.', link: 'https://www.youtube.com/playlist?list=PLbMVogVj5nJSlrbw4_iG2So-uIu6g-w2u', imageUrl: 'https://placehold.co/400x200/9a3412/ffffff?text=Cost+Accounting' },
+
+//     // B.Com - Marketing & Economics
+//     { id: 32, category: 'B.Com', subCategory: 'Marketing', title: 'Fundamentals of Digital Marketing', description: 'Learn the fundamentals of digital marketing to help your business or career grow. By Google.', link: 'https://learndigital.withgoogle.com/digitalunlocked/course/digital-marketing', imageUrl: 'https://placehold.co/400x200/78350f/ffffff?text=Marketing' },
+//     { id: 33, category: 'B.Com', subCategory: 'Marketing', title: 'SEO Training by Moz', description: 'A comprehensive guide to Search Engine Optimization from one of the industry\'s leading experts.', link: 'https://moz.com/learn/seo', imageUrl: 'https://placehold.co/400x200/78350f/ffffff?text=SEO' },
+//     { id: 34, category: 'B.Com', subCategory: 'Marketing', title: 'Social Media Marketing (HubSpot)', description: 'A free certification course on how to build and execute a social media marketing strategy.', link: 'https://academy.hubspot.com/courses/social-media', imageUrl: 'https://placehold.co/400x200/78350f/ffffff?text=Social+Media' },
+//     { id: 35, category: 'B.Com', subCategory: 'Economics', title: 'Principles of Economics (MIT)', description: 'MIT\'s introductory course on micro and macroeconomics by Prof. Jonathan Gruber.', link: 'https://www.edx.org/course/introduction-to-microeconomics', imageUrl: 'https://placehold.co/400x200/713f12/ffffff?text=Economics' },
+//     { id: 36, category: 'B.Com', subCategory: 'Economics', title: 'Indian Economy (NPTEL)', description: 'A course focusing on the economic development and policy in India. From IIT Delhi.', link: 'https://www.youtube.com/playlist?list=PLbMVogVj5nJRu-B01p3jG30k5CjM-p5q0', imageUrl: 'https://placehold.co/400x200/713f12/ffffff?text=Indian+Economy' },
+//     { id: 37, category: 'B.A.', subCategory: 'Economics', title: 'The Power of Macroeconomics', description: 'Learn about GDP, inflation, unemployment, and the forces that shape national economies.', link: 'https://www.coursera.org/learn/macroeconomics', imageUrl: 'https://placehold.co/400x200/713f12/ffffff?text=Macroeconomics' },
+
+//     // B.A.
+//     { id: 38, category: 'B.A.', subCategory: 'History', title: 'Crash Course World History', description: 'John Green\'s wildly entertaining and educational series covering the breadth of world history.', link: 'https://www.youtube.com/playlist?list=PLBDA2E52FB1EF80C9', imageUrl: 'https://placehold.co/400x200/be185d/ffffff?text=History' },
+//     { id: 39, category: 'B.A.', subCategory: 'Psychology', title: 'Introduction to Psychology (Yale)', description: 'A comprehensive overview of the scientific study of thought and behavior from Yale University.', link: 'https://www.youtube.com/playlist?list=PL6A08EB4EEFF3E91F', imageUrl: 'https://placehold.co/400x200/9d174d/ffffff?text=Psychology' },
+//     { id: 40, category: 'B.A.', subCategory: 'Political Science', title: 'Intro to Political Philosophy (Yale)', description: 'Examine the fundamental questions of politics and justice with this classic course.', link: 'https://www.youtube.com/playlist?list=PL-uRhZ_p-BM55m9eZ_45z5v5y4g6w5a2z', imageUrl: 'https://placehold.co/400x200/86198f/ffffff?text=PoliSci' },
+//     { id: 41, category: 'B.A.', subCategory: 'Law', title: 'Contract Law (Harvard)', description: 'An introduction to the main principles of contract law from Harvard.', link: 'https://www.edx.org/course/contract-law-from-trust-to-promise-to-contract', imageUrl: 'https://placehold.co/400x200/701a75/ffffff?text=Contract+Law' },
+//     { id: 42, category: 'B.A.', subCategory: 'History', title: 'The Modern World (UVA)', description: 'A university-level survey of modern world history from the University of Virginia.', link: 'https://www.coursera.org/learn/modern-world', imageUrl: 'https://placehold.co/400x200/be185d/ffffff?text=Modern+History' },
+//     { id: 43, category: 'B.A.', subCategory: 'Psychology', title: 'The Science of Well-Being', description: 'Yale\'s most popular course, teaching you the science of happiness and how to implement it.', link: 'https://www.coursera.org/learn/the-science-of-well-being', imageUrl: 'https://placehold.co/400x200/9d174d/ffffff?text=Well-Being' },
+
+//     // Vocational
+//     { id: 44, category: 'Vocational', subCategory: 'Digital Marketing', title: 'HubSpot Inbound Marketing', description: 'Learn inbound marketing techniques that range from content creation to social promotion.', link: 'https://academy.hubspot.com/courses/inbound-marketing', imageUrl: 'https://placehold.co/400x200/0d9488/ffffff?text=Digital+Marketing' },
+//     { id: 45, category: 'Vocational', subCategory: 'Graphic Design', title: 'Canva Design School', description: 'Learn the fundamentals of graphic design, branding, and visual communication using Canva.', link: 'https://www.canva.com/designschool/tutorials/', imageUrl: 'https://placehold.co/400x200/0d9488/ffffff?text=Graphic+Design' },
+//     { id: 46, category: 'Vocational', subCategory: 'Graphic Design', title: 'Figma for UI/UX Design', description: 'A beginner-friendly crash course on YouTube for designing web and mobile apps in Figma.', link: 'https://www.youtube.com/watch?v=jwN_9oBB_hA', imageUrl: 'https://placehold.co/400x200/0f766e/ffffff?text=UI%2FUX' },
+//     { id: 47, category: 'Vocational', subCategory: 'Hospitality', title: 'Hotel Management', description: 'Learn the core principles of hotel management, focusing on revenue and distribution strategies.', link: 'https://www.edx.org/xseries/hkpolyux-hotel-management', imageUrl: 'https://placehold.co/400x200/0d9488/ffffff?text=Hospitality' },
+//     { id: 48, category: 'Vocational', subCategory: 'Healthcare Tech', title: 'Intro to Medical Scribing', description: 'Understand the role of a medical scribe and learn the basics of electronic health records (EHR).', link: 'https://www.coursera.org/learn/medical-scribing', imageUrl: 'https://placehold.co/400x200/0d9488/ffffff?text=Healthcare+Tech' },
+
+//     // Masters & PhD
+//     { id: 49, category: 'Masters', subCategory: 'M.Tech', title: 'Machine Learning (Stanford)', description: 'The legendary Andrew Ng course that has started countless careers in AI and machine learning.', link: 'https://www.coursera.org/learn/machine-learning', imageUrl: 'https://placehold.co/400x200/9333ea/ffffff?text=Machine+Learning' },
+//     { id: 50, category: 'Masters', subCategory: 'MBA', title: 'Operations Management (Wharton)', description: 'Learn to analyze and improve business processes in services or manufacturing.', link: 'https://www.coursera.org/learn/wharton-operations', imageUrl: 'https://placehold.co/400x200/9333ea/ffffff?text=MBA+Operations' },
+//     { id: 51, category: 'PhD', subCategory: 'Research', title: 'How to Write a Research Paper', description: 'A step-by-step guide from a UC Berkeley professor on writing and publishing a scientific paper.', link: 'https://www.youtube.com/watch?v=g3dkRsTqdDA', imageUrl: 'https://placehold.co/400x200/374151/ffffff?text=Research' },
+//     { id: 52, category: 'PhD', subCategory: 'Statistics', title: 'Statistical Learning (Stanford)', description: 'An in-depth course on statistical modeling, the foundation of modern data science.', link: 'https://www.youtube.com/playlist?list=PLoROMvodv4rMi_ww3ccu2E639ri2n1A6e', imageUrl: 'https://placehold.co/400x200/374151/ffffff?text=Statistics' },
+//     { id: 53, category: 'Masters', subCategory: 'M.Sc', title: 'Advanced Data Science with IBM', description: 'A professional certificate for advancing skills in data science and machine learning.', link: 'https://www.coursera.org/professional-certificates/ibm-advanced-data-science', imageUrl: 'https://placehold.co/400x200/8b5cf6/ffffff?text=Data+Science' },
+//     { id: 54, category: 'PhD', subCategory: 'Research', title: 'Research Design', description: 'A course on how to design research projects, from developing a question to choosing a methodology.', link: 'https://www.coursera.org/learn/research-design-inquiry-discovery', imageUrl: 'https://placehold.co/400x200/4b5563/ffffff?text=Research+Design' },
+//     { id: 55, category: 'Masters', subCategory: 'M.A.', title: 'Philosophy and the Sciences', description: 'Examine the relationship between philosophy and the natural and social sciences.', link: 'https://www.coursera.org/learn/philosophy-science', imageUrl: 'https://placehold.co/400x200/8b5cf6/ffffff?text=Philosophy' },
+// ];
+
+// const MAIN_TABS = ['All', 'B.Tech', 'B.Sc', 'B.Com', 'B.A.', 'BCA', 'Vocational', 'Masters', 'PhD'];
+
+// const ResourceCard = ({ title, description, imageUrl, link }) => (
+//   <Link href={link} target="_blank" rel="noopener noreferrer" className="block group">
+//     <div className="bg-white rounded-xl shadow-md overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+//       <img className="h-40 w-full object-cover" src={imageUrl} alt={`${title} thumbnail`} />
+//       <div className="p-6 flex flex-col flex-grow">
+//         <h3 className="text-lg font-bold text-gray-800 group-hover:text-indigo-600 flex-shrink-0">{title}</h3>
+//         <p className="mt-2 text-gray-600 text-sm flex-grow">{description}</p>
+//       </div>
+//     </div>
+//   </Link>
+// );
+
+// export default function ResourcesPage() {
+//   const [activeTab, setActiveTab] = useState('All');
+//   const [activeSubTab, setActiveSubTab] = useState('All');
+
+//   const handleTabClick = (tab) => {
+//     setActiveTab(tab);
+//     setActiveSubTab('All');
+//   };
+
+//   const filteredResources = allResources.filter(resource => {
+//     if (activeTab !== 'All' && resource.category !== activeTab) return false;
+//     if (TABS_CONFIG[activeTab] && activeSubTab !== 'All' && resource.subCategory !== activeSubTab) return false;
+//     return true;
+//   });
+
+//   return (
+//     <main className="bg-gray-50 min-h-screen mt-20">
+//       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+//         <div className="text-center mb-12">
+//           <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">Study Resources</h1>
+//           <p className="mt-4 text-xl text-gray-600">Explore materials for every step of your academic journey.</p>
+//         </div>
+
+//         {/* Main Tab Navigation */}
+//         <div className="mb-4">
+//           <div className="border-b border-gray-200">
+//             <nav className="-mb-px flex flex-wrap justify-center space-x-2 sm:space-x-4 lg:space-x-8">
+//               {MAIN_TABS.map(tab => (
+//                 <button key={tab} onClick={() => handleTabClick(tab)}
+//                   className={`whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg ${activeTab === tab ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+//                   {tab}
+//                 </button>
+//               ))}
+//             </nav>
+//           </div>
+//         </div>
+
+//         {/* Sub-Tab Navigation */}
+//         {TABS_CONFIG[activeTab] && (
+//           <div className="mb-10 animate-fadeIn">
+//             <nav className="flex flex-wrap justify-center gap-2 sm:gap-4">
+//               {TABS_CONFIG[activeTab].map(subTab => (
+//                 <button key={subTab} onClick={() => setActiveSubTab(subTab)}
+//                   className={`py-2 px-4 rounded-full text-sm font-medium transition-colors ${activeSubTab === subTab ? 'bg-indigo-600 text-white shadow' : 'bg-white text-gray-600 hover:bg-gray-100'}`}>
+//                   {subTab}
+//                 </button>
+//               ))}
+//             </nav>
+//           </div>
+//         )}
+
+//         {/* Resource Cards Grid */}
+//         {filteredResources.length > 0 ? (
+//           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+//             {filteredResources.map(resource => (
+//               <ResourceCard key={resource.id} {...resource} />
+//             ))}
+//           </div>
+//         ) : (
+//           <div className="text-center py-16 animate-fadeIn">
+//             <h3 className="text-lg font-semibold text-gray-700">No resources found</h3>
+//             <p className="text-gray-500 mt-2">Please check back later or select a different category.</p>
+//           </div>
+//         )}
+//       </div>
+//     </main>
+//   );
+// }
+

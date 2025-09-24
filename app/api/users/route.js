@@ -1,4 +1,4 @@
-// app/api/users/route.js (example path in Next.js 13+ with App Router)
+// app/api/users/route.js
 
 import connectMongo from "@/lib/mongodb";
 import PersonalDetail from "@/models/PersonalDetail";
@@ -7,29 +7,29 @@ import PersonalDetail from "@/models/PersonalDetail";
 export async function GET(req) {
   await connectMongo();
 
-  /* // --- PRODUCTION SECURITY ---
+  /* ------------- PRODUCTION SECURITY (Enable in prod) -------------
   const { userId, sessionClaims } = getAuth(req);
-
   if (!userId || sessionClaims?.metadata?.role !== "admin") {
-    return new Response(
-      JSON.stringify({ message: "Unauthorized" }),
-      { status: 401 }
-    );
+    return new Response(JSON.stringify({ message: "Unauthorized" }), {
+      status: 401,
+    });
   }
-  */
+  ------------------------------------------------------------------ */
 
   try {
-    // Fetch all user profiles (full schema data) sorted by newest first
+    // Fetch all users with full schema fields
     const users = await PersonalDetail.find({})
-      .sort({ createdAt: -1 })
-      .lean(); // .lean() makes query faster & returns plain JS objects
+      .sort({ createdAt: -1 }) // latest first
+      .select(
+        "userId name email mobile dob gender role city courseInterested educationDetails hasCompletedOnboarding createdAt updatedAt"
+      ) // explicitly select all schema fields
+      .lean();
 
     return new Response(JSON.stringify(users), { status: 200 });
   } catch (err) {
     console.error("GET All Users Error:", err);
-    return new Response(
-      JSON.stringify({ message: "Server error" }),
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ message: "Server error" }), {
+      status: 500,
+    });
   }
 }
