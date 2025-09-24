@@ -44,7 +44,7 @@ export default function Home() {
       <main className="pt-24 sm:pt-32 overflow-x-hidden"> {/* Prevents horizontal scroll from animations */}
 
         {/* --- Hero Section --- */}
-        <section className="relative px-4">
+        <section className="relative px-4 py-34">
           <div className="absolute inset-0 -z-10 overflow-hidden">
              <div className="absolute -top-40 left-0 w-[80rem] h-[80rem] bg-indigo-50/50 rounded-full blur-3xl opacity-60"></div>
           </div>

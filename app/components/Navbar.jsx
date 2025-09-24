@@ -1,10 +1,9 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UserButton, SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 
-// This array of links remains the same
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/career-map", label: "Career Tree" },
@@ -15,10 +14,37 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  // Renamed to 'isScrolled' for clarity, indicating if it HAS been scrolled
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if the page has been scrolled down by more than, for example, 20 pixels
+      // If window.scrollY > 20, set isScrolled to true, otherwise false
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
+
   return (
-    <header className="fixed top-3 left-10 right-10 z-50 py-2 bg-gray-500/20 rounded-full backdrop-blur-md shadow-sm">
+    <header
+      className={`
+        fixed top-3 left-10 right-10 z-50 py-2 rounded-full shadow-sm
+        transition-all duration-300 ease-in-out
+        ${isScrolled
+          ? 'bg-gray-400/20 backdrop-blur-md' // Scrolled state: translucent gray
+          : 'bg-gray-200/80 backdrop-blur-md shadow-lg' // Initial state (top): white with blur and stronger shadow
+        }
+      `}
+    >
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
@@ -28,15 +54,15 @@ export default function Navbar() {
               <img
                 src="/logo.jpg"
                 alt="MargDarshak Logo"
-                className="h-12 w-auto rounded-xl" // You can adjust the height (h-9) as needed
+                className="h-12 w-auto rounded-xl"
               />
               <span
                 className="
-        text-3xl font-extrabold
-        text-transparent
-        bg-clip-text
-        bg-gradient-to-r from-indigo-600 to-blue-500
-      "
+                text-3xl font-extrabold
+                text-transparent
+                bg-clip-text
+                bg-gradient-to-r from-indigo-600 to-blue-500
+              "
               >
                 MargDarshak
               </span>
