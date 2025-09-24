@@ -79,7 +79,7 @@ function CollegeDetails({ college, animationKey }) {
                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl"></div>
                          <a href="/colleges/college-map" className="absolute top-4 right-4 inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg font-semibold shadow-lg transition hover:bg-white/30 transform hover:-translate-y-0.5 text-sm">
                             <MapPinIcon />
-                            <span>Find Nearby Colleges</span>
+                            <span className='mt-2'>Find Nearby Colleges</span>
                         </a>
                          <div className="absolute bottom-4 left-4 text-white">
                              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{college.name}</h2>
@@ -92,7 +92,7 @@ function CollegeDetails({ college, animationKey }) {
             <div className="border-b border-slate-200 px-6 sm:px-8">
                 <nav className="-mb-px flex space-x-6 relative">
                     <TabButton name="details" activeTab={activeTab} setActiveTab={setActiveTab}>Details</TabButton>
-                    <TabButton name="branches" activeTab={activeTab} setActiveTab={setActiveTab}>Branches</TabButton>
+                    <TabButton name="branches" activeTab={activeTab} setActiveTab={setActiveTab}>Branches / Cutoffs</TabButton>
                     <TabButton name="facilities" activeTab={activeTab} setActiveTab={setActiveTab}>Facilities</TabButton>
                 </nav>
             </div>

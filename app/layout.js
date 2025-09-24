@@ -3,7 +3,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import ClientWrapper from "./components/ClientWrapper";
 import 'leaflet/dist/leaflet.css';
-
+import Script from "next/script";
 import Navbar from "./components/Navbar";
 
 // Load Google Fonts
@@ -32,8 +32,13 @@ export default function RootLayout({ children }) {
       >
         <ClerkProvider afterSignInUrl="/" afterSignUpUrl="/personal-detail">
           <ClientWrapper>
-      <Navbar />
+            <Navbar />
             {children}
+            <Script
+              id="omnidimension-web-widget"
+              strategy="afterInteractive" // loads after page is interactive (like async)
+              src="https://backend.omnidim.io/web_widget.js?secret_key=1f41b7e01b49016266f3e7812ffc5325"
+            />
           </ClientWrapper>
         </ClerkProvider>
       </body>
